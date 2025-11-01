@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TaskZone : MonoBehaviour
+public class ShipTaskZone : MonoBehaviour
 {
     public ShipTask CurrentTask { get; private set; }
     public bool IsOccupied => CurrentTask != null;

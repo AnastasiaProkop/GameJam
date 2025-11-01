@@ -12,9 +12,9 @@ public class ShipTask : MonoBehaviour
     private bool isBeingWorkedOn = false;
 
     private ShipManager shipManager;
-    private TaskZone parentZone;
+    private ShipTaskZone parentZone;
 
-    public void Initialize(ShipManager manager, TaskZone zone)
+    public void Initialize(ShipManager manager, ShipTaskZone zone)
     {
         shipManager = manager;
         parentZone = zone;

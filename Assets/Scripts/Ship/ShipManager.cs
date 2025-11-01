@@ -30,7 +30,7 @@ public class ShipManager : MonoBehaviour
 
     [Header("Настройки Задач")]
     [Tooltip("Список всех зон, где могут появляться задачи")]
-    public List<TaskZone> taskZones;  // Валера
+    public List<ShipTaskZone> shipTaskZones;  // Валера
     [Tooltip("Префаб задачи 'Пробоина'")]
     public GameObject breachTaskPrefab;
 
@@ -80,13 +80,13 @@ public class ShipManager : MonoBehaviour
     private void SpawnNewTask()
     {
         // Ищем все свободные зоны
-        List<TaskZone> availableZones = taskZones.Where(zone => !zone.IsOccupied).ToList();
+        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsOccupied).ToList();
         
         
         if (availableZones.Count > 0)
         {
             // Выбираем случайную свободную зону
-            TaskZone randomZone = availableZones[Random.Range(0, availableZones.Count)];
+            ShipTaskZone randomZone = availableZones[Random.Range(0, availableZones.Count)];
             
             // Создаем экземпляр задачи и размещаем его в зоне
             // В будущем здесь можно будет выбирать тип задачи
@@ -151,7 +151,7 @@ public class ShipManager : MonoBehaviour
     public int GetActiveTaskCount()
     {
         // Возвращаем количество активных задач
-        return taskZones.Count(zone => zone.IsOccupied);
+        return shipTaskZones.Count(zone => zone.IsOccupied);
        // return 1;
     }
 
