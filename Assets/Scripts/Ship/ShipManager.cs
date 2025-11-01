@@ -95,7 +95,7 @@ public class ShipManager : MonoBehaviour
             
             // Передаем задаче ссылки на себя и на зону
             newTask.Initialize(this, randomZone);
-            randomZone.AssignTask(newTask);
+            randomZone.AddTask(newTask);
             
             Debug.Log($"Новая задача создана в зоне: {randomZone.name}");
         }

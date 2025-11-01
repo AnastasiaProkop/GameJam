@@ -50,7 +50,7 @@ public class ShipTask : MonoBehaviour
     private void Complete()
     {
         Debug.Log("Задача выполнена!");
-        parentZone.ClearTask();
+        parentZone.ClearTask(this);
         Destroy(gameObject);
     }
 }
