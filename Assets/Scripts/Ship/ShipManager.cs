@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public class ShipManager : MonoBehaviour
 {
@@ -27,8 +29,8 @@ public class ShipManager : MonoBehaviour
     public float CurrentMadness { get; private set; }
 
     [Header("Настройки Задач")]
-    // [Tooltip("Список всех зон, где могут появляться задачи")]
-    // public List<TaskZone> taskZones;  Валера
+    [Tooltip("Список всех зон, где могут появляться задачи")]
+    public List<TaskZone> taskZones;  // Валера
     [Tooltip("Префаб задачи 'Пробоина'")]
     public GameObject breachTaskPrefab;
 
@@ -62,7 +64,7 @@ public class ShipManager : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"Состояние: {CurrentState}, Безумие: {CurrentMadness}/{maxMadnessValue}, Здоровье: {CurrentHealth}");
+        //Debug.Log($"Состояние: {CurrentState}, Безумие: {CurrentMadness}/{maxMadnessValue}, Здоровье: {CurrentHealth}");
     }
 
     private void HandleTaskSpawning()
@@ -78,25 +80,25 @@ public class ShipManager : MonoBehaviour
     private void SpawnNewTask()
     {
         // Ищем все свободные зоны
-        // List<TaskZone> availableZones = taskZones.Where(zone => !zone.IsOccupied).ToList();
+        List<TaskZone> availableZones = taskZones.Where(zone => !zone.IsOccupied).ToList();
         
         
-        // if (availableZones.Count > 0)
-        // {
-        //     // Выбираем случайную свободную зону
-        //     TaskZone randomZone = availableZones[Random.Range(0, availableZones.Count)];
+        if (availableZones.Count > 0)
+        {
+            // Выбираем случайную свободную зону
+            TaskZone randomZone = availableZones[Random.Range(0, availableZones.Count)];
             
-        //     // Создаем экземпляр задачи и размещаем его в зоне
-        //     // В будущем здесь можно будет выбирать тип задачи
-        //     GameObject taskObject = Instantiate(breachTaskPrefab, randomZone.transform.position, Quaternion.identity, randomZone.transform);
-        //     ShipTask newTask = taskObject.GetComponent<ShipTask>();
+            // Создаем экземпляр задачи и размещаем его в зоне
+            // В будущем здесь можно будет выбирать тип задачи
+            GameObject taskObject = Instantiate(breachTaskPrefab, randomZone.transform.position, Quaternion.identity, randomZone.transform);
+            ShipTask newTask = taskObject.GetComponent<ShipTask>();
             
-        //     // Передаем задаче ссылки на себя и на зону
-        //     newTask.Initialize(this, randomZone);
-        //     randomZone.AssignTask(newTask);
+            // Передаем задаче ссылки на себя и на зону
+            newTask.Initialize(this, randomZone);
+            randomZone.AssignTask(newTask);
             
-        //     Debug.Log($"Новая задача создана в зоне: {randomZone.name}");
-        // }
+            Debug.Log($"Новая задача создана в зоне: {randomZone.name}");
+        }
         Debug.Log($"Нет места для новой задачи");
     }
 
@@ -149,7 +151,8 @@ public class ShipManager : MonoBehaviour
     public int GetActiveTaskCount()
     {
         // Возвращаем количество активных задач
-        // return taskZones.Count(zone => zone.IsOccupied);
+        return taskZones.Count(zone => zone.IsOccupied);
+       // return 1;
     }
 
 
