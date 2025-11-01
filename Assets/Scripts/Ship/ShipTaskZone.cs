@@ -13,7 +13,7 @@ public class ShipTaskZone : MonoBehaviour
     {
         if (IsOccupied)
         {
-            Debug.Log($"Нет места для новой задачи");
+            Debug.Log($"РќРµС‚ РјРµСЃС‚Р° РґР»СЏ РЅРѕРІРѕР№ Р·Р°РґР°С‡Рё");
             return;
         }
         TaskList.Add(task);
