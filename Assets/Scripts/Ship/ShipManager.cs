@@ -18,10 +18,8 @@ public class ShipManager : MonoBehaviour
     [Header("Настройки Безумия (Madness)")]
     [Tooltip("Максимальное значение полосы Безумия. При достижении этого значения корабль переходит в состояние Madness.")]
     public float maxMadnessValue = 100f;
-    [Tooltip("Насколько быстро полоса Безумия заполняется сама по себе в обычном состоянии (единиц в секунду).")]
-    public float madnessBaseIncreaseRate = 0.5f;
-    [Tooltip("Дополнительное заполнение полосы Безумия за каждую активную задачу (единиц в секунду).")]
-    public float madnessIncreasePerTask = 1.0f;
+    [Tooltip("Базовая скорость, с которой Безумие растет само по себе, даже без задач")]
+    public float madnessBaseIncreaseRate = 1.0f;
     [Tooltip("Насколько быстро полоса Безумия убывает в состоянии Madness (единиц в секунду).")]
     public float madnessDecayRate = 5.0f;
 
@@ -30,7 +28,7 @@ public class ShipManager : MonoBehaviour
 
     [Header("Настройки Задач")]
     [Tooltip("Список всех зон, где могут появляться задачи")]
-    public List<ShipTaskZone> shipTaskZones;  // Валера
+    public List<ShipTaskZone> shipTaskZones; 
     [Tooltip("Префаб задачи 'Пробоина'")]
     public GameObject breachTaskPrefab;
 
@@ -95,7 +93,7 @@ public class ShipManager : MonoBehaviour
             
             // Передаем задаче ссылки на себя и на зону
             newTask.Initialize(this, randomZone);
-            randomZone.AssignTask(newTask);
+            randomZone.AddTask(newTask);
             
             Debug.Log($"Новая задача создана в зоне: {randomZone.name}");
         }
@@ -104,25 +102,34 @@ public class ShipManager : MonoBehaviour
 
     private void UpdateNormalState()
     {
-        // Рассчитываем скорость заполнения полосы
-        float increaseRate = madnessBaseIncreaseRate + (GetActiveTaskCount() * madnessIncreasePerTask);
-        // Изменяем значение полосы безумия
-        CurrentMadness = Mathf.Min(maxMadnessValue, CurrentMadness + increaseRate * Time.deltaTime);
+        float totalIncreaseRate = madnessBaseIncreaseRate;
 
-        // Проверяем, не достигли ли мы максимума
+        // Проходим по всем активным задачам и суммируем их индивидуальное влияние
+        foreach (var zone in shipTaskZones)
+        {
+            foreach (var task in zone.TaskList)
+            {
+                //доделать после Насти (возможность в ShipTaskZone размещать несколько задач)
+                totalIncreaseRate += task.GetCurrentMadnessRate();
+            }
+        }
+
+        //CurrentMadness += totalIncreaseRate * Time.deltaTime;
+        IncreaseMadness(totalIncreaseRate * Time.deltaTime);
+
         if (CurrentMadness >= maxMadnessValue)
         {
             CurrentMadness = maxMadnessValue;
             CurrentState = ShipState.Madness;
             Debug.Log("КОРАБЛЬ ОХВАЧЕН БЕЗУМИЕМ!");
-            // Здесь можно активировать эффекты: смена музыки, визуальные эффекты и т.д.
         }
     }
-
+    
     private void UpdateMadnessState()
     {
         // Полоса безумия уменьшается
-        CurrentMadness = Mathf.Max(0, madnessDecayRate * Time.deltaTime);
+        // CurrentMadness = Mathf.Max(0, CurrentMadness - madnessDecayRate * Time.deltaTime);
+        DecreaseMadness(madnessDecayRate * Time.deltaTime);
 
         // Проверяем, не вернулись ли мы в нормальное состояние
         if (CurrentMadness <= 0)
@@ -146,6 +153,19 @@ public class ShipManager : MonoBehaviour
     public void TakeDamage(float damage)
     {
         CurrentHealth = Mathf.Max(0, CurrentHealth - damage);
+    }
+
+    public void IncreaseMadness(float amount)
+    {
+        if (CurrentState == ShipState.Normal)
+        {
+            CurrentMadness = Mathf.Min(maxMadnessValue, CurrentMadness + amount);
+        }
+    }
+
+    public void DecreaseMadness(float amount)
+    {
+        CurrentMadness = Mathf.Max(0, CurrentMadness - amount);
     }
 
     public int GetActiveTaskCount()

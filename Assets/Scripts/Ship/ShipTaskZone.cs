@@ -1,17 +1,27 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ShipTaskZone : MonoBehaviour
 {
-    public ShipTask CurrentTask { get; private set; }
-    public bool IsOccupied => CurrentTask != null;
+    public List<ShipTask> TaskList = new();
+    [SerializeField, Min(1)] private int MaxTaskQuantity = 2;
 
-    public void AssignTask(ShipTask task)
+    public bool IsOccupied => TaskList.Count >= MaxTaskQuantity;
+
+
+    public void AddTask(ShipTask task)
     {
-        CurrentTask = task;
+        if (IsOccupied)
+        {
+            Debug.Log($"Нет места для новой задачи");
+            return;
+        }
+        TaskList.Add(task);
     }
 
-    public void ClearTask()
+    public void ClearTask(ShipTask task)
     {
-        CurrentTask = null;
+        TaskList.Remove(task);
     }
+
 }
