@@ -101,7 +101,7 @@ public class ShipManager : MonoBehaviour
     private void SpawnNewTask()
     {
         // 1. Ищем все зоны, которые еще не заполнены до своего лимита.
-        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsOccupied).ToList();
+        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsFull()).ToList();
         
         if (availableZones.Count > 0)
         {
