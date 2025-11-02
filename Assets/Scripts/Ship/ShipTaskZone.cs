@@ -110,4 +110,13 @@ public class ShipTaskZone : MonoBehaviour
         }
     }
 
+    public void StartWork(TaskType task)
+    {
+        TaskList.Find(shipTask => shipTask.taskType == task)?.StartWork();
+    }
+
+    public void StopWork(TaskType task)
+    {
+        TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
+    }
 }

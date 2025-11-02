@@ -8,12 +8,15 @@ public class ShootState : State
 
     public override void Enter()
     {
-        Debug.Log("Shoot");
+        player.shipManager.StartWorkInZone(
+            TaskType.Gun, player.currentZone - 1);
         base.Enter();
     }
 
     public override void Exit()
     {
+        player.shipManager.StopWorkInZone(
+            TaskType.Gun, player.currentZone - 1);
         base.Exit();
     }
 

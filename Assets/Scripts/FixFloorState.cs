@@ -8,12 +8,15 @@ public class FixFloorState : State
 
     public override void Enter()
     {
-        Debug.Log("Floor");
+        player.shipManager.StartWorkInZone(
+            TaskType.FloorHole, player.currentZone - 1);
         base.Enter();
     }
 
     public override void Exit()
     {
+        player.shipManager.StopWorkInZone(
+            TaskType.FloorHole, player.currentZone - 1);
         base.Exit();
     }
 
