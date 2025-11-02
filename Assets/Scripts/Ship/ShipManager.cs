@@ -29,8 +29,6 @@ public class ShipManager : MonoBehaviour
     [Header("Настройки Задач")]
     [Tooltip("Список всех зон, где могут появляться задачи")]
     public List<ShipTaskZone> shipTaskZones; 
-    [Tooltip("Префаб задачи 'Пробоина'")]
-    public GameObject breachTaskPrefab;
 
     [Tooltip("Как часто (в секундах) игра пытается создать новую задачу")]
     public float taskSpawnInterval = 15f;
@@ -62,7 +60,7 @@ public class ShipManager : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"Состояние: {CurrentState}, Безумие: {CurrentMadness}/{maxMadnessValue}, Здоровье: {CurrentHealth}");
+        //Debug.Log($"Состояние: {CurrentState}, Безумие: {CurrentMadness}/{maxMadnessValue}, Здоровье: {CurrentHealth}");
     }
 
     private void HandleTaskSpawning()
@@ -103,7 +101,7 @@ public class ShipManager : MonoBehaviour
     private void SpawnNewTask()
     {
         // 1. Ищем все зоны, которые еще не заполнены до своего лимита.
-        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsOccupied).ToList();
+        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsFull()).ToList();
         
         if (availableZones.Count > 0)
         {
