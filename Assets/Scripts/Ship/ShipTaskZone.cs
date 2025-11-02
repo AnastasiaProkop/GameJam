@@ -83,54 +83,48 @@ public class ShipTaskZone : MonoBehaviour
     {
         isSpawning = true;
 
+        ShipTask taskInfoProvider = GetTaskObjectByType(taskType);
+        if (taskInfoProvider == null)
+        {
+            Debug.LogError($"Не удалось найти информацию о задаче типа {taskType}");
+            isSpawning = false;
+            yield break;
+        }
+        
         // Определяем, где появится щупальце
         Transform spawnPoint = GetAnchorForTaskType(taskType);
-        
         GameObject tentacleObj = Instantiate(tentacleAnimatorPrefab, spawnPoint.position, spawnPoint.rotation);
         TentacleAnimator tentacle = tentacleObj.GetComponent<TentacleAnimator>();
+        tentacle.PlayAttackAnimation(taskType);
+        yield return new WaitForSeconds(taskInfoProvider.taskCreationTiming);
 
-        bool animationFinished = false;
-        Action onImpact = () => { ActivatePrePlacedTask(manager, taskType); };
-        Action onComplete = () => { animationFinished = true; };
+        ActivatePrePlacedTask(manager, taskType);
+        float remainingAnimationTime = taskInfoProvider.appearanceAnimationDuration - taskInfoProvider.taskCreationTiming;
+        if (remainingAnimationTime > 0)
+        {
+            yield return new WaitForSeconds(remainingAnimationTime);
+        }
 
-        try
+        if (tentacleObj != null)
         {
-            tentacle.OnImpactAction += onImpact;
-            tentacle.OnAnimationCompleteAction += onComplete;
-            tentacle.PlayAttackAnimation(taskType);
-            yield return new WaitUntil(() => animationFinished);
+            Destroy(tentacleObj);
         }
-        finally
-        {
-            if (tentacle != null)
-            {
-                tentacle.OnImpactAction -= onImpact;
-                tentacle.OnAnimationCompleteAction -= onComplete;
-            }
-            isSpawning = false;
-        }
+
+        isSpawning = false;
     }
 
-    // private void CreateInteractableTask(ShipManager manager, TaskType taskType)
-    // {
-    //     // Особый случай с пушкой
-    //     if (taskType == TaskType.Gun && targetCannon != null)
-    //     {
-    //         targetCannon.ActivateTask(manager, this); // Активируем задачу на самой пушке
-    //         AddTask(targetCannon.GetComponent<ShipTask>());
-    //     }
-    //     else // Обычные задачи (дыра, пожар и т.д.)
-    //     {
-    //         GameObject taskPrefab = allowedTaskPrefabs.First(p => p.GetComponent<ShipTask>().taskType == taskType);
-    //         if (taskPrefab != null)
-    //         {
-    //             GameObject taskObject = Instantiate(taskPrefab, transform.position, Quaternion.identity, transform);
-    //             ShipTask newTask = taskObject.GetComponent<ShipTask>();
-    //             newTask.Initialize(manager, this);
-    //             AddTask(newTask);
-    //         }
-    //     }
-    // }
+    private ShipTask GetTaskObjectByType(TaskType type)
+    {
+        if (type == TaskType.Gun && targetCannon != null)
+        {
+            return targetCannon.GetComponent<ShipTask>();
+        }
+        if (taskRegistry.TryGetValue(type, out PrePlacedTask placement))
+        {
+            return placement.taskObject;
+        }
+        return null;
+    }
 
     private void ActivatePrePlacedTask(ShipManager manager, TaskType taskType)
     {
@@ -155,6 +149,14 @@ public class ShipTaskZone : MonoBehaviour
     public void StopWork(TaskType task)
     {
         TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
+    }
+
+    public bool TaskAvailable(TaskType task)
+    {
+        ShipTask shipTask = TaskList.Find(shipTask => shipTask.taskType == task);
+        if (shipTask == null) return true;
+
+        return shipTask.TaskAvailable();
     }
 
     private Transform GetAnchorForTaskType(TaskType type)

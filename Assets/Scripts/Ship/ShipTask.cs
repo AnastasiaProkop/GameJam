@@ -34,6 +34,12 @@ public class ShipTask : MonoBehaviour
     [Tooltip("На сколько увеличивается урон этой задачи по кораблю после провала")]
     public float baseDamageInMadnessIncreaseOnFailure = 0.5f;
 
+    // Анимация
+    [Header("Параметры Анимации")]
+    [Tooltip("Примерная длительность анимации появления для этой задачи (в секундах)")]
+    public float appearanceAnimationDuration = 4.0f;
+    public float taskCreationTiming = 1.0f;
+    
     // Приватные переменные для отслеживания состояния
     private float currentFailureTimer;
     private float currentbaseMadnessRate; // Текущее "влияние" задачи на безумие
@@ -87,11 +93,13 @@ public class ShipTask : MonoBehaviour
 
     public void StartWork()
     {
+        Debug.Log("Started fixing " + taskType.ToString());
         isBeingWorkedOn = true;
     }
 
     public void StopWork()
     {
+        Debug.Log("Stopped fixing " + taskType.ToString());
         isBeingWorkedOn = false;
     }
 
@@ -158,5 +166,10 @@ public class ShipTask : MonoBehaviour
     public float GetCurrentDamageInMadness()
     {
         return currentbaseDamageInMadness;
+    }
+
+    public bool TaskAvailable()
+    {
+        return !isBeingWorkedOn;
     }
 }
