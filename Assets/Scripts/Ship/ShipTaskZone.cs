@@ -1,7 +1,9 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 
 public class ShipTaskZone : MonoBehaviour
 {
@@ -9,9 +11,15 @@ public class ShipTaskZone : MonoBehaviour
     [Tooltip("Префаб анимированного щупальца")]
     public GameObject tentacleAnimatorPrefab;
 
-    [Header("Настройка Зоны")]
-    [Tooltip("Список префабов задач, которые МОГУТ появиться в этой зоне")]
-    public List<GameObject> allowedTaskPrefabs;
+    [System.Serializable]
+    public class PrePlacedTask
+    {
+        public TaskType taskType;
+        public ShipTask taskObject; 
+        public Transform animationAnchor;
+    }
+    [Tooltip("Заполните этот список всеми задачами, которые могут появиться в этой зоне")]
+    public List<PrePlacedTask> prePlacedTasks;
 
     [Tooltip("Ссылка на пушку, которую может захватить щупальце")]
     public Cannon targetCannon; 
@@ -19,12 +27,31 @@ public class ShipTaskZone : MonoBehaviour
     public List<ShipTask> TaskList { get; private set; }
     //[SerializeField, Min(1)] private int MaxTaskQuantity = 2;
 
-    public bool IsOccupied => TaskList.Count >= allowedTaskPrefabs.Count;
+    private Dictionary<TaskType, ShipTask> taskRegistry;
+    public bool IsOccupied => TaskList.Count >= taskRegistry.Count;
+    public bool IsTaskActive(TaskType type) => TaskList.Any(t => t.taskType == type);
     private bool isSpawning = false; // Флаг, чтобы не запускать две анимации одновременно
 
     void Awake()
     {
         TaskList = new List<ShipTask>();
+
+        taskRegistry = new Dictionary<TaskType, ShipTask>();
+        // Преобразуем удобный список из инспектора в быстрый словарь
+        foreach (var placement in prePlacedTasks)
+        {
+            if (placement.taskObject != null && !taskRegistry.ContainsKey(placement.taskType))
+            {
+                taskRegistry.Add(placement.taskType, placement.taskObject);
+                // Убедимся, что все задачи выключены при старте
+                placement.taskObject.gameObject.SetActive(false);
+            }
+        }
+        // Добавляем пушку в нашу картотеку, если она есть
+        if (targetCannon != null)
+        {
+            taskRegistry.Add(TaskType.Gun, targetCannon.GetComponent<ShipTask>());
+        }
     }
 
     public bool HasTaskOfType(TaskType type)
@@ -49,65 +76,112 @@ public class ShipTaskZone : MonoBehaviour
 
     public void TrySpawnNewTask(ShipManager manager)
     {
-        if (isSpawning || IsOccupied) return;
+        if (isSpawning || IsFull()) return;
 
-        // Находим доступные для спавна задачи
-        var availablePrefabs = allowedTaskPrefabs.Where(p => !HasTaskOfType(p.GetComponent<ShipTask>().taskType)).ToList();
-        
-        // Проверяем особый случай с пушкой
-        bool canSpawnCannonTask = (targetCannon != null && !targetCannon.IsTaskActive);
-        if(canSpawnCannonTask)
-        {
-            availablePrefabs.Add(targetCannon.gameObject);
-        }
+        // Находим все задачи, которые еще не активны
+        var availablePlacements = prePlacedTasks.Where(p => !IsTaskActive(p.taskType)).ToList();
 
-        if (availablePrefabs.Count > 0)
+        if (availablePlacements.Count > 0)
         {
-            GameObject chosenPrefab = availablePrefabs[Random.Range(0, availablePrefabs.Count)];
-            StartCoroutine(SpawnTaskSequence(manager, chosenPrefab.GetComponent<ShipTask>().taskType));
+            // Выбираем случайную из ДОСТУПНЫХ заготовок
+            PrePlacedTask chosenPlacement = availablePlacements[UnityEngine.Random.Range(0, availablePlacements.Count)];
+            // Запускаем корутину, передавая в нее всю информацию о задаче
+            StartCoroutine(SpawnTaskSequence(manager, chosenPlacement));
         }
     }
 
-    private IEnumerator SpawnTaskSequence(ShipManager manager, TaskType taskType)
+    private IEnumerator SpawnTaskSequence(ShipManager manager, PrePlacedTask placement)
     {
         isSpawning = true;
 
         // 1. Создаем щупальце-актёра
-        GameObject tentacleObj = Instantiate(tentacleAnimatorPrefab, transform.position, Quaternion.identity);
+        Transform spawnPoint = placement.animationAnchor != null ? placement.animationAnchor : this.transform;
+        GameObject tentacleObj = Instantiate(tentacleAnimatorPrefab, spawnPoint.position, spawnPoint.rotation);
         TentacleAnimator tentacle = tentacleObj.GetComponent<TentacleAnimator>();
 
-        // 2. Подписываемся на его события
-        tentacle.OnImpactAction += () => {
-            CreateInteractableTask(manager, taskType);
-        };
-        
-        // 3. Запускаем анимацию
-        tentacle.PlayAttackAnimation(taskType);
-        
-        yield return new WaitForSeconds(5f);
+        // Флаг, который мы будем ждать. Он станет 'true', когда анимация закончится.
+        bool animationFinished = false;
 
-        isSpawning = false;
+        Action onImpact = () => { ActivatePrePlacedTask(manager, placement.taskType); };
+        Action onComplete = () => { animationFinished = true; };
+
+        try
+        {
+            // Подписываемся на события
+            tentacle.OnImpactAction += onImpact;
+            tentacle.OnAnimationCompleteAction += onComplete;
+
+            // Запускаем нужную анимацию
+            tentacle.PlayAttackAnimation(placement.taskType);
+            
+            // Ждем, пока флаг animationFinished не станет true.
+            yield return new WaitUntil(() => animationFinished);
+        }
+        finally
+        {
+            // Гарантированно отписываемся от событий, даже если что-то пошло не так
+            if (tentacle != null)
+            {
+                tentacle.OnImpactAction -= onImpact;
+                tentacle.OnAnimationCompleteAction -= onComplete;
+            }
+            isSpawning = false;
+        }
+
     }
 
-    private void CreateInteractableTask(ShipManager manager, TaskType taskType)
+    // private void CreateInteractableTask(ShipManager manager, TaskType taskType)
+    // {
+    //     // Особый случай с пушкой
+    //     if (taskType == TaskType.Gun && targetCannon != null)
+    //     {
+    //         targetCannon.ActivateTask(manager, this); // Активируем задачу на самой пушке
+    //         AddTask(targetCannon.GetComponent<ShipTask>());
+    //     }
+    //     else // Обычные задачи (дыра, пожар и т.д.)
+    //     {
+    //         GameObject taskPrefab = allowedTaskPrefabs.First(p => p.GetComponent<ShipTask>().taskType == taskType);
+    //         if (taskPrefab != null)
+    //         {
+    //             GameObject taskObject = Instantiate(taskPrefab, transform.position, Quaternion.identity, transform);
+    //             ShipTask newTask = taskObject.GetComponent<ShipTask>();
+    //             newTask.Initialize(manager, this);
+    //             AddTask(newTask);
+    //         }
+    //     }
+    // }
+
+    private void ActivatePrePlacedTask(ShipManager manager, TaskType taskType)
     {
-        // Особый случай с пушкой
-        if (taskType == TaskType.Gun && targetCannon != null)
+        // Находим нужную задачу в словаре
+        if (taskRegistry.TryGetValue(taskType, out ShipTask taskToActivate))
         {
-            targetCannon.ActivateTask(manager, this); // Активируем задачу на самой пушке
-            AddTask(targetCannon.GetComponent<ShipTask>());
-        }
-        else // Обычные задачи (дыра, пожар и т.д.)
-        {
-            GameObject taskPrefab = allowedTaskPrefabs.First(p => p.GetComponent<ShipTask>().taskType == taskType);
-            if (taskPrefab != null)
+            if (taskType == TaskType.Gun)
             {
-                GameObject taskObject = Instantiate(taskPrefab, transform.position, Quaternion.identity, transform);
-                ShipTask newTask = taskObject.GetComponent<ShipTask>();
-                newTask.Initialize(manager, this);
-                AddTask(newTask);
+                GetComponent<Cannon>()?.ActivateTask(manager, this);
             }
+            else
+            {
+                // Просто включаем объект
+                taskToActivate.gameObject.SetActive(true);
+                taskToActivate.Initialize(manager, this);
+            }
+            
+            AddTask(taskToActivate);
         }
+    }
+
+    // Вспомогательный метод IsFull()
+    private bool IsFull()
+    {
+        // Считаем количество активных задач из списка заранее размещенных
+        int activePrePlaced = prePlacedTasks.Count(p => IsTaskActive(p.taskType));
+        // Добавляем пушку, если она активна
+        int totalActive = activePrePlaced + (targetCannon != null && targetCannon.IsTaskActive ? 1 : 0);
+        // Сравниваем с общим количеством возможных задач
+        int totalPossible = prePlacedTasks.Count + (targetCannon != null ? 1 : 0);
+        
+        return totalActive >= totalPossible;
     }
 
 }
