@@ -1,3 +1,4 @@
+using Spine.Unity;
 using UnityEngine;
 using UnityEngine.Windows;
 
@@ -7,7 +8,7 @@ public abstract class State
 
     protected StateMachine stateMachine;
     protected string animBoolName;
-    protected Animator animator;
+    protected SkeletonAnimation animator;
     protected Player player;
 
     public State(Player player, StateMachine stateMachine, string animBoolName)
@@ -15,12 +16,12 @@ public abstract class State
         this.player = player;
         this.stateMachine = stateMachine;
         this.animBoolName = animBoolName;
-        //animator = player.animator;
+        animator = player.skeletonAnimation;
 
     }
     public virtual void Enter()
     {
-        //animator.SetBool(animBoolName, true);
+        //animator.AnimationState.SetAnimation(0, animBoolName, true); не 
 
     }
 
@@ -30,7 +31,7 @@ public abstract class State
     }
     public virtual void Exit()
     {
-        //animator.SetBool(animBoolName, false);
+        //animator.AnimationState.ClearTrack(0);
     }
 
 }
