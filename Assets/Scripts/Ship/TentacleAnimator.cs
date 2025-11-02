@@ -22,9 +22,9 @@ public class TentacleAnimator : MonoBehaviour
     {
         switch (taskType)
         {
-            case TaskType.Breach: return "StrikeFloor";
+            case TaskType.FloorHole: return "StrikeFloor";
             case TaskType.Fire: return "SpitFire";
-            case TaskType.CannonDefense: return "GrabCannon";
+            case TaskType.Gun: return "GrabCannon";
             case TaskType.SideHole: return "StrikeSide";
             default: return null;
         }
