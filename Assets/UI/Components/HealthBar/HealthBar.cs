@@ -7,8 +7,8 @@ namespace UI
     {
         public class HealthBar
         {
-            private Label m_HealthLabel;
-            private VisualElement m_HealthBarMask;
+            private readonly Label m_HealthLabel;
+            private readonly VisualElement m_HealthBarMask;
 
             // ON BEST - INFO FROM PLAYER CONTROL
             private const int DEBUG_MAX_HEALTH = 100;
