@@ -26,8 +26,8 @@ public class TestChangeAtmosphere : MonoBehaviour
 
 
     // свет для фазы безумия
-    //[SerializeField] private Texture2D[] nightColorMaps; // Lightmap-*_light.exr
-    //[SerializeField] private Texture2D[] nightDirMaps; // Lightmap-*_dir.png
+    [SerializeField] private Texture2D[] nightColorMaps; // Lightmap-*_light.exr
+    [SerializeField] private Texture2D[] nightDirMaps; // Lightmap-*_dir.png
 
     [SerializeField] private Color32 DirColorMadness = new Color32(223, 83, 233, 255);
     [SerializeField] private float DirIntensityMadness = 0.01f;
@@ -116,9 +116,11 @@ public class TestChangeAtmosphere : MonoBehaviour
         dirLight.bounceIntensity = DirIndirectNormal;
         dirLight.transform.rotation = Quaternion.Euler(DirRotationNormal);
 
+        // для отдельных ламп
         foreach (var l in nightLamps) if (l) l.enabled = false;
 
-        //LightmapSettings.lightmaps = System.Array.Empty<LightmapData>();
+        // для карт
+        LightmapSettings.lightmaps = System.Array.Empty<LightmapData>();
 
     }
 
@@ -129,8 +131,10 @@ public class TestChangeAtmosphere : MonoBehaviour
         dirLight.bounceIntensity = DirIndirectMadness;
         dirLight.transform.rotation = Quaternion.Euler(DirRotationMadness);
 
+        // для отдельных ламп
         foreach (var l in nightLamps) if (l) l.enabled = true;
-        /*
+        
+        // для карт
         LightmapSettings.lightmapsMode = LightmapsMode.CombinedDirectional; // возможно не надо...
 
         int n = Mathf.Max(nightColorMaps?.Length ?? 0,
@@ -146,7 +150,7 @@ public class TestChangeAtmosphere : MonoBehaviour
         }
 
         LightmapSettings.lightmaps = data;
-        */
+        
 
     }
 
