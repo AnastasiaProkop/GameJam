@@ -115,7 +115,7 @@ public class ShipTaskZone : MonoBehaviour
 
     private ShipTask GetTaskObjectByType(TaskType type)
     {
-        if (type == TaskType.Fire && targetCannon != null)
+        if (type == TaskType.Gun && targetCannon != null)
         {
             return targetCannon.GetComponent<ShipTask>();
         }
@@ -149,6 +149,14 @@ public class ShipTaskZone : MonoBehaviour
     public void StopWork(TaskType task)
     {
         TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
+    }
+
+    public bool TaskAvailable(TaskType task)
+    {
+        ShipTask shipTask = TaskList.Find(shipTask => shipTask.taskType == task);
+        if (shipTask == null) return true;
+
+        return shipTask.TaskAvailable();
     }
 
     private Transform GetAnchorForTaskType(TaskType type)

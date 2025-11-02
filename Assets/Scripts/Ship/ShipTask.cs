@@ -93,11 +93,13 @@ public class ShipTask : MonoBehaviour
 
     public void StartWork()
     {
+        Debug.Log("Started fixing " + taskType.ToString());
         isBeingWorkedOn = true;
     }
 
     public void StopWork()
     {
+        Debug.Log("Stopped fixing " + taskType.ToString());
         isBeingWorkedOn = false;
     }
 
@@ -164,5 +166,10 @@ public class ShipTask : MonoBehaviour
     public float GetCurrentDamageInMadness()
     {
         return currentbaseDamageInMadness;
+    }
+
+    public bool TaskAvailable()
+    {
+        return !isBeingWorkedOn;
     }
 }

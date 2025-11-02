@@ -8,6 +8,8 @@ public class FixSideState : State
 
     public override void Enter()
     {
+        player.currentZone = player.nextZone;
+
         player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", true);
         player.shipManager.StartWorkInZone(
             TaskType.SideHole, player.currentZone - 1);

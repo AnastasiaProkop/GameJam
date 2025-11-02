@@ -8,6 +8,8 @@ public class FixFloorState : State
 
     public override void Enter()
     {
+        player.currentZone = player.nextZone;
+
         player.skeletonAnimation.AnimationState.SetAnimation(0, "water", true);
         player.shipManager.StartWorkInZone(
             TaskType.FloorHole, player.currentZone - 1);

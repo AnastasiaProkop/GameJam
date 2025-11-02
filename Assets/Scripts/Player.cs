@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     public GameObject ship;
     public ShipManager shipManager { get; private set; }
-    public int currentZone { get; private set; } = 0;
+    public int currentZone { get; set; } = 0;
+    public int nextZone { get; private set; } = 0;
 
     public StateMachine stateMachine {  get; private set; }
     public IdleState idleState { get; private set; }
@@ -110,7 +111,9 @@ public class Player : MonoBehaviour
                     currentTag = hitInfo.collider.tag;
 
                     // Находим номер зоны в конце названия
-                    currentZone = int.Parse(hitInfo.collider.transform.parent.name[^1..]);
+                    nextZone = int.Parse(hitInfo.collider.transform.parent.name[^1..]);
+
+                    if (!TaskAvailable()) return;
 
                     if (Vector3.Distance(transform.position, targetPos) > 0.1f)
                     {
@@ -130,4 +133,16 @@ public class Player : MonoBehaviour
 
     }
 
+    private bool TaskAvailable()
+    {
+        TaskType? type =
+            currentTag == "Gun"       ? TaskType.Gun       :
+            currentTag == "FloorHole" ? TaskType.FloorHole :
+            currentTag == "SideHole"  ? TaskType.SideHole  :
+            currentTag == "Fire"      ? TaskType.Fire      :
+                                        null               ;
+        if (type == null) return true;
+
+        return shipManager.TaskAvailableInZone((TaskType)type, nextZone - 1);
+    }
 }

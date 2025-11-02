@@ -196,4 +196,11 @@ public class ShipManager : MonoBehaviour
 
         shipTaskZones[zoneIndex].StopWork(task);
     }
+
+    public bool TaskAvailableInZone(TaskType task, int zoneIndex)
+    {
+        if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return false;
+
+        return shipTaskZones[zoneIndex].TaskAvailable(task);
+    }
 }

@@ -8,6 +8,8 @@ public class ShootState : State
 
     public override void Enter()
     {
+        player.currentZone = player.nextZone;
+
         player.shipManager.StartWorkInZone(
             TaskType.Gun, player.currentZone - 1);
         base.Enter();
