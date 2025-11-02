@@ -15,6 +15,7 @@
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1
 *.blend1.meta
+*.blend1.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -31,9 +32,8 @@
 # Jetbrains Rider personal-layer settings
 *.DotSettings.user
 
-# Visual Studio directories
+# Visual Studio cache directory
 .vs/
-.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -44,7 +44,6 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
-*.slnx
 *.suo
 *.tmp
 *.user
