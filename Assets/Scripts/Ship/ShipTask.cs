@@ -1,7 +1,18 @@
 using UnityEngine;
 
+public enum TaskType
+{
+    Gun,
+    FloorHole,
+    SideHole,
+    Fire
+}
+
 public class ShipTask : MonoBehaviour
 {
+    [Header("Тип Задачи")]
+    public TaskType taskType;
+
     [Header("Параметры Задачи")]
     [Tooltip("Сколько времени (в секундах) нужно, чтобы выполнить задачу")]
     public float timeToComplete = 10f;
@@ -117,7 +128,15 @@ public class ShipTask : MonoBehaviour
     {
         Debug.Log("Задача выполнена!");
         parentZone.ClearTask(this);
-        Destroy(gameObject);
+        // Если это задача на пушке, деактивируем ее, а не уничтожаем
+        if (taskType == TaskType.Gun)
+        {
+            GetComponent<Cannon>()?.DeactivateTask();
+        }
+        else
+        {
+            Destroy(gameObject); // Обычные задачи уничтожаем
+        }
     }
 
     public float GetCurrentMadnessRate()
