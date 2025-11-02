@@ -1,4 +1,5 @@
-﻿using Unity.VisualScripting;
+﻿using Spine.Unity;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -27,17 +28,21 @@ public class Player : MonoBehaviour
 
     public NavMeshAgent navMeshAgent { get; private set; }
 
+    [SerializeField] public SkeletonAnimation skeletonAnimation {  get; private set; }
+
 
     private void Awake()
     {
         targetPos = transform.position;
         stateMachine = new StateMachine();
-        idleState = new IdleState(this, stateMachine, "IsIdle");
-        walkState = new WalkState(this, stateMachine, "IsWalk");
+        idleState = new IdleState(this, stateMachine, "idle");
+        walkState = new WalkState(this, stateMachine, "");
         putOutFireState = new PutOutFireState(this, stateMachine, "IsPutOutFire");
         shootState = new ShootState(this, stateMachine, "IsShoot");
-        fixFloorState = new FixFloorState(this, stateMachine, "IsFixFloor");
-        fixSideState = new FixSideState(this, stateMachine, "IsFixSide");
+        fixFloorState = new FixFloorState(this, stateMachine, "water");
+        fixSideState = new FixSideState(this, stateMachine, "bort");
+
+        skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
 
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
@@ -101,7 +106,7 @@ public class Player : MonoBehaviour
 
                     if (Vector3.Distance(transform.position, targetPos) > 0.1f)
                     {
-                        navMeshAgent.SetDestination(targetPos);
+                        //navMeshAgent.SetDestination(targetPos);
                         stateMachine.ChangeState(walkState);
                     }
                 }

@@ -8,12 +8,13 @@ public class FixSideState : State
 
     public override void Enter()
     {
-        Debug.Log("Side");
+        player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", true);
         base.Enter();
     }
 
     public override void Exit()
     {
+        //player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", false);
         base.Exit();
     }
 

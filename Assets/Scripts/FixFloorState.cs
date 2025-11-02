@@ -8,12 +8,13 @@ public class FixFloorState : State
 
     public override void Enter()
     {
-        Debug.Log("Floor");
+        player.skeletonAnimation.AnimationState.SetAnimation(0, "water", true);
         base.Enter();
     }
 
     public override void Exit()
     {
+       // player.skeletonAnimation.AnimationState.SetAnimation(0, "water", false);
         base.Exit();
     }
 

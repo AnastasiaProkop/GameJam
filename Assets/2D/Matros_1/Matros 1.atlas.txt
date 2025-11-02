@@ -1,0 +1,111 @@
+
+Matros 1.png
+size: 367,739
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+body
+  rotate: true
+  xy: 77, 93
+  size: 96, 129
+  orig: 300, 300
+  offset: 105, 77
+  index: -1
+body_back
+  rotate: true
+  xy: 206, 67
+  size: 96, 129
+  orig: 300, 300
+  offset: 105, 77
+  index: -1
+eyrs
+  rotate: 180
+  xy: 2, 46
+  size: 149, 48
+  orig: 300, 300
+  offset: 76, 189
+  index: -1
+foot_1
+  rotate: false
+  xy: 298, 642
+  size: 67, 96
+  orig: 300, 300
+  offset: 90, 23
+  index: -1
+foot_2
+  rotate: 270
+  xy: 165, 23
+  size: 70, 96
+  orig: 300, 300
+  offset: 148, 19
+  index: -1
+h_1
+  rotate: false
+  xy: 2, 652
+  size: 39, 41
+  orig: 300, 300
+  offset: 27, 148
+  index: -1
+h_2
+  rotate: true
+  xy: 318, 554
+  size: 45, 45
+  orig: 300, 300
+  offset: 238, 150
+  index: -1
+hand_1
+  rotate: 180
+  xy: 262, 4
+  size: 94, 65
+  orig: 300, 300
+  offset: 50, 127
+  index: -1
+hand_2
+  rotate: true
+  xy: 297, 260
+  size: 97, 61
+  orig: 300, 300
+  offset: 161, 130
+  index: -1
+head
+  rotate: true
+  xy: 2, 166
+  size: 134, 138
+  orig: 300, 300
+  offset: 83, 162
+  index: -1
+head_back
+  rotate: true
+  xy: 189, 153
+  size: 134, 138
+  orig: 300, 300
+  offset: 83, 162
+  index: -1
+shoot_1
+  rotate: false
+  xy: 2, 693
+  size: 46, 45
+  orig: 300, 300
+  offset: 91, 0
+  index: -1
+shoot_2
+  rotate: false
+  xy: 313, 599
+  size: 49, 42
+  orig: 300, 300
+  offset: 168, 0
+  index: -1
+things
+  rotate: false
+  xy: 2, 303
+  size: 41, 47
+  orig: 300, 300
+  offset: 192, 219
+  index: -1
+vedro
+  rotate: false
+  xy: 2, 262
+  size: 348, 476
+  orig: 512, 512
+  offset: 82, 22
+  index: -1
