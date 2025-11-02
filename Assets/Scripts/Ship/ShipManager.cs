@@ -182,4 +182,18 @@ public class ShipManager : MonoBehaviour
         CurrentMadness = Mathf.Max(0, CurrentMadness - amount);
     }
 
+
+    public void StartWorkInZone(TaskType task, int zoneIndex)
+    {
+        if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
+
+        shipTaskZones[zoneIndex].StartWork(task);
+    }
+
+    public void StopWorkInZone(TaskType task, int zoneIndex)
+    {
+        if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
+
+        shipTaskZones[zoneIndex].StopWork(task);
+    }
 }

@@ -8,12 +8,15 @@ public class FixSideState : State
 
     public override void Enter()
     {
-        Debug.Log("Side");
+        player.shipManager.StartWorkInZone(
+            TaskType.SideHole, player.currentZone - 1);
         base.Enter();
     }
 
     public override void Exit()
     {
+        player.shipManager.StopWorkInZone(
+            TaskType.SideHole, player.currentZone - 1);
         base.Exit();
     }
 

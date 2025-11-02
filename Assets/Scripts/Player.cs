@@ -7,6 +7,10 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    public GameObject ship;
+    public ShipManager shipManager { get; private set; }
+    public int currentZone { get; private set; } = 0;
 
     public StateMachine stateMachine {  get; private set; }
     public IdleState idleState { get; private set; }
@@ -39,6 +43,7 @@ public class Player : MonoBehaviour
         fixFloorState = new FixFloorState(this, stateMachine, "IsFixFloor");
         fixSideState = new FixSideState(this, stateMachine, "IsFixSide");
 
+        shipManager = ship.GetComponent<ShipManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void Start()
@@ -98,6 +103,9 @@ public class Player : MonoBehaviour
                 if (hitInfo.collider.CompareTag("Gun") || hitInfo.collider.CompareTag("FloorHole") || hitInfo.collider.CompareTag("Fire") || hitInfo.collider.CompareTag("SideHole")) { 
                     targetPos = ray.GetPoint(distance);
                     currentTag = hitInfo.collider.tag;
+
+                    // Находим номер зоны в конце названия
+                    currentZone = int.Parse(hitInfo.collider.transform.parent.name[^1..]);
 
                     if (Vector3.Distance(transform.position, targetPos) > 0.1f)
                     {
