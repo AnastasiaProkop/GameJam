@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UI.Components;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,10 +11,11 @@ namespace UI
     {
         public UIDocument UIMainScreenDoc;
         public UIDocument popupUIDoc;
-        // public UIDocument loseGameUIDoc;
+        public UIDocument loseGameUIDoc;
         public UIDocument startUIDoc;
         public Popup pausePopup;
         public Popup startPopup;
+        public Popup losePopup;
         public ShipManager ship;
         private HealthBar healthBar;
         private HealthBar insanityBar;
@@ -43,6 +45,7 @@ namespace UI
                 pausePopup.AssignActionToButton("exit", Exit);
                 startPopup.AssignActionToButton("play", StartGame);
                 startPopup.Open();
+                losePopup.AssignActionToButton("exit", Exit);
             }
             else
             {
@@ -69,6 +72,7 @@ namespace UI
             {
                 pausePopup = new Popup("pause_popup", popupUIDoc);
                 startPopup = new Popup("start_popup", startUIDoc);
+                losePopup = new Popup("lose_popup", loseGameUIDoc);
             }
             else
             {
@@ -84,13 +88,15 @@ namespace UI
             {
                 GetPauseMenu();
             }
+
+            coinLabel.text = "0"; // # SHOULD BE MONEY VAR
+
+            // TOGGLE FOR EASY GAME OVER
+            // if (!paused && ship.CurrentHealth <= 0)
+            // {
+            //     Lose();
+            // }
         }
-        // public void LowerHealth()
-        // {
-        //     healthBar?.DebugSimulateHealthChange();
-        //     insanityBar?.DebugSimulateHealthChange();
-        //     coinLabel.text = (numberOfCoins++).ToString();
-        // }
 
         public void StartGame()
         {
@@ -123,7 +129,7 @@ namespace UI
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
-                Application.Quit();
+            Application.Quit();
 #endif
         }
 
@@ -139,6 +145,16 @@ namespace UI
                 paused = false;
                 Time.timeScale = 1;
             }
+        }
+
+        public void Lose()
+        {
+            Pause(true);
+            Label losePopupLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("coin_label");
+            Label timeLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("time_label");
+            losePopupLabel.text = "0"; // # SHOULD BE MONEY
+            timeLabel.text = "0"; // # SHOULD BE TIME
+            losePopup.Open();
         }
     }
 
