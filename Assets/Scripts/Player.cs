@@ -4,8 +4,7 @@ using UnityEngine.AI;
 
 public class Player : MonoBehaviour
 {
-    public GameObject ship;
-    public ShipManager shipManager { get; private set; }
+    public ShipManager shipManager;
     public int currentZone { get; set; } = 0;
     public int nextZone { get; private set; } = 0;
 
@@ -48,7 +47,6 @@ public class Player : MonoBehaviour
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
        // animatorEffects = GetComponentInChildren<Animator>();
 
-        shipManager = ship.GetComponent<ShipManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void Start()
