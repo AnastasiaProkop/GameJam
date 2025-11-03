@@ -65,6 +65,9 @@ public class ShipManager : MonoBehaviour
         //Пытаемся создать задачу
         HandleTaskSpawning();
 
+        //Добавляем монетки
+        IncreaseCoins();
+
         //Обновляем состояние
         switch (CurrentState)
         {
