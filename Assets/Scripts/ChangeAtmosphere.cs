@@ -16,9 +16,9 @@ public class ChangeAtmosphere : MonoBehaviour
 
     // для тумана
     [SerializeField] Color32 ColorFogNormal = new Color32(106, 145, 219, 255);
-    [SerializeField] Color32 ColorFogMadness = new Color32(116, 106, 219, 255);
-    [SerializeField] float DensityFogNormal = 0.03f;
-    [SerializeField] float DensityFogMadness = 0.05f;
+    [SerializeField] Color32 ColorFogMadness = new Color32(148, 114, 225, 255);
+    [SerializeField] float DensityFogNormal = 0.02f;
+    [SerializeField] float DensityFogMadness = 0.025f;
 
     // источники света 3д
     [Header("3d lights")]
@@ -31,8 +31,8 @@ public class ChangeAtmosphere : MonoBehaviour
     [SerializeField] private Texture2D[] nightDirMaps; // Lightmap-*_dir.png
 
     // свет для фазы безумия 3д
-    [SerializeField] private Color32 DirColorMadness = new Color32(223, 83, 233, 255);
-    [SerializeField] private float DirIntensityMadness = 0.01f;
+    [SerializeField] private Color32 DirColorMadness = new Color32(110, 83, 233, 255);
+    [SerializeField] private float DirIntensityMadness = 0.5f;
     [SerializeField] private float DirIndirectMadness = 5f;
     [SerializeField] private Vector3 DirRotationMadness = new Vector3(76.487f, -897.816f, -1325.621f);
     
@@ -40,17 +40,7 @@ public class ChangeAtmosphere : MonoBehaviour
     [SerializeField] private Color32 DirColorNormal = new Color32(255, 255, 255, 255);
     [SerializeField] private float DirIntensityNormal = 1f;
     [SerializeField] private float DirIndirectNormal = 1f;
-    [SerializeField] private Vector3 DirRotationNormal = new Vector3 (41.506f, -839.624f, -685.302f);
-
-
-    // источники света 2д
-    [Header("2d lights")]
-    [SerializeField] private Light2D globalLight;          // Тип Global
-    [SerializeField] private List<Light2D> pointLights = new(); // Точечные (Point)
-
-    // настройки 2д света
-    [SerializeField, Range(0f, 5f)] private float globalIntensityNormal = 0.9f;
-    [SerializeField, Range(0f, 5f)] private float globalIntensityMadness = 0.17f;
+    [SerializeField] private Vector3 DirRotationNormal = new Vector3 (63.597f, -545.525f, -725.78f);
 
     // global volume для затемнения вообще всего
     [SerializeField] private Volume globalVolume;
@@ -130,16 +120,6 @@ public class ChangeAtmosphere : MonoBehaviour
         // для карт 3d
         LightmapSettings.lightmaps = System.Array.Empty<LightmapData>();
 
-        // для 2д света точечного
-        for (int i = 0; i < pointLights.Count; i++)
-        {
-            if (pointLights[i] == null) continue;
-            pointLights[i].enabled = false;
-        }
-
-        // 2d глобальный
-        globalLight.intensity = globalIntensityNormal;
-
         //глобал вольюм
         _colorAdj.colorFilter.value = GlobalColorNormal;
     }
@@ -170,16 +150,6 @@ public class ChangeAtmosphere : MonoBehaviour
         }
 
         LightmapSettings.lightmaps = data;
-
-        // для 2д света точечного
-        for (int i = 0; i < pointLights.Count; i++)
-        {
-            if (pointLights[i] == null) continue;
-            pointLights[i].enabled = true;
-        }
-
-        // 2d глобальный
-        globalLight.intensity = globalIntensityMadness;
 
         //глобал вольюм
         _colorAdj.colorFilter.value = GlobalColorMadness;

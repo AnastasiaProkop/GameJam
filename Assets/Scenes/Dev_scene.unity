@@ -1116,32 +1116,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f4f9e721b10f2438b654e7d83bb189, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1285453820
-GameObject:
+--- !u!1001 &1163440754
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1285453821}
-  - component: {fileID: 1285453824}
-  - component: {fileID: 1285453823}
-  - component: {fileID: 1285453822}
-  m_Layer: 0
-  m_Name: Spine GameObject (Matros 1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1285453821
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1285453820}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.088, y: 0.026, z: 0.08}
@@ -1329,11 +1306,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 46329859}
   m_SourcePrefab: {fileID: 100100000, guid: 013bbf52831cb0b43bb1eadace5a38d5, type: 3}
---- !u!4 &1994231905 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5072712926020774163, guid: ef5c596f27591e24e947d8c046d2ca20, type: 3}
-  m_PrefabInstance: {fileID: 4297660074075403404}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2120857572 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2903351062595362357, guid: 5dbf4b62c866105dea03025662ee2631, type: 3}
@@ -1442,6 +1414,5 @@ SceneRoots:
   - {fileID: 654261106}
   - {fileID: 1846501057}
   - {fileID: 507181635}
-  - {fileID: 4297660074075403404}
   - {fileID: 385423072}
   - {fileID: 758415433}
