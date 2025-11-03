@@ -147,8 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 310c21ff7c8c21a49bae18a58ac935ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
-  maxMadnessValue: 1
+  maxHealth: 100
+  maxMadnessValue: 100
   madnessBaseIncreaseRate: 1
   madnessDecayRate: 5
   shipTaskZones:
