@@ -135,8 +135,7 @@ public class ShipTaskZone : MonoBehaviour
         }
         else if (taskRegistry.TryGetValue(taskType, out PrePlacedTask placement))
         {
-            placement.taskObject.gameObject.SetActive(true);
-            placement.taskObject.Initialize(manager, this);
+            placement.taskObject.ActivateTask(manager, this);
             AddTask(placement.taskObject);
         }
     }

@@ -8,6 +8,9 @@ public class ShootState : State
 
     public override void Enter()
     {
+
+        SoundManager.Instance.LoadCannon();
+
         player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
 
         player.currentZone = player.nextZone;
@@ -19,7 +22,7 @@ public class ShootState : State
 
     public override void Exit()
     {
-
+        SoundManager.Instance.Shoot();
         player.shipManager.StopWorkInZone(
             TaskType.Gun, player.currentZone - 1);
         base.Exit();
