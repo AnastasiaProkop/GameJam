@@ -47,7 +47,8 @@ public class Cannon : MonoBehaviour
         //highlightObject.SetActive(false);
         if (explosionVFXPrefab != null && pointVFX != null)
         {
-            Instantiate(explosionVFXPrefab, pointVFX.position, pointVFX.rotation);
+            Debug.Log("Стреляем");
+            GameObject explosionVFX = Instantiate(explosionVFXPrefab, pointVFX.position, pointVFX.rotation);
         }
         IsTaskActive = false;
     }
