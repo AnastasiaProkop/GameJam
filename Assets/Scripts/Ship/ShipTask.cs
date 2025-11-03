@@ -18,9 +18,9 @@ public class ShipTask : MonoBehaviour
     public float timeToComplete = 10f;
     
     [Tooltip("Какой урон в секунду наносит эта задача в состоянии 'Madness'")]
-    public float damageInMadness = 1f; 
+    public float baseDamageInMadness = 1f; 
     [Tooltip("Базовая скорость, с которой эта задача заполняет полосу Безумия (ед/сек)")]
-    public float madnessRate = 0.5f;
+    public float baseMadnessRate = 0.5f;
 
     [Header("Параметры Провала Задачи")]
     [Tooltip("Время в секундах, по истечении которого задача 'проваливается'")]
@@ -30,21 +30,27 @@ public class ShipTask : MonoBehaviour
     [Tooltip("Единовременный урон кораблю при провале в состоянии Безумия")]
     public float damagePenalty = 10f;
     [Tooltip("На сколько увеличивается 'влияние' этой задачи на Безумие после провала")]
-    public float madnessRateIncreaseOnFailure = 0.25f;
+    public float baseMadnessRateIncreaseOnFailure = 0.25f;
     [Tooltip("На сколько увеличивается урон этой задачи по кораблю после провала")]
-    public float damageInMadnessIncreaseOnFailure = 0.5f;
+    public float baseDamageInMadnessIncreaseOnFailure = 0.5f;
 
+    // Анимация
+    [Header("Параметры Анимации")]
+    [Tooltip("Примерная длительность анимации появления для этой задачи (в секундах)")]
+    public float appearanceAnimationDuration = 4.0f;
+    public float taskCreationTiming = 1.0f;
+    
     // Приватные переменные для отслеживания состояния
     private float currentFailureTimer;
-    private float currentMadnessRate; // Текущее "влияние" задачи на безумие
-    private float currentDamageInMadness; // Текущее количество урона, наносимое в состоянии безумия
-    private bool isFailed = false;
-
+    private float currentbaseMadnessRate; // Текущее "влияние" задачи на безумие
+    private float currentbaseDamageInMadness; // Текущее количество урона, наносимое в состоянии безумия
+    
     public float CurrentProgress { get; private set; }
     private bool isBeingWorkedOn = false;
+    private bool isFailed = false;
 
-    private ShipManager shipManager;
-    private ShipTaskZone parentZone;
+    private ShipManager shipManager; // ссылка на ShipManager, чтобы отслеживать состояние корабля(обычное/безумие)
+    private ShipTaskZone parentZone; // ссылка на ShipTaskZone, в которой нахожится задача, чтобы после выполнения задачи отключать её
 
     public void Initialize(ShipManager manager, ShipTaskZone zone)
     {
@@ -54,9 +60,12 @@ public class ShipTask : MonoBehaviour
 
     void Start()
     {
+        CurrentProgress = 0f;
+        isBeingWorkedOn = false;
+        isFailed = false;
         currentFailureTimer = failureTime;
-        currentMadnessRate = madnessRate;
-        currentDamageInMadness = damageInMadness;
+        currentbaseMadnessRate = baseMadnessRate;
+        currentbaseDamageInMadness = baseDamageInMadness;
     }
 
     void Update()
@@ -77,18 +86,20 @@ public class ShipTask : MonoBehaviour
         }
         else if (shipManager.CurrentState == ShipManager.ShipState.Madness)
         {
-            shipManager.TakeDamage(currentDamageInMadness * Time.deltaTime);
+            shipManager.TakeDamage(currentbaseDamageInMadness * Time.deltaTime);
         }
     }
     
 
     public void StartWork()
     {
+        Debug.Log("Started fixing " + taskType.ToString());
         isBeingWorkedOn = true;
     }
 
     public void StopWork()
     {
+        Debug.Log("Stopped fixing " + taskType.ToString());
         isBeingWorkedOn = false;
     }
 
@@ -113,13 +124,13 @@ public class ShipTask : MonoBehaviour
         if (shipManager.CurrentState == ShipManager.ShipState.Normal)
         {
             shipManager.IncreaseMadness(madnessPenalty);
-            currentMadnessRate += madnessRateIncreaseOnFailure;
-            Debug.Log($"Безумие увеличилось на {madnessPenalty}. Новое влияние задачи: {currentMadnessRate}");
+            currentbaseMadnessRate += baseMadnessRateIncreaseOnFailure;
+            Debug.Log($"Безумие увеличилось на {madnessPenalty}. Новое влияние задачи: {currentbaseMadnessRate}");
         }
         else // Состояние Madness
         {
             shipManager.TakeDamage(damagePenalty);
-            currentDamageInMadness += damageInMadnessIncreaseOnFailure;
+            currentbaseDamageInMadness += baseDamageInMadnessIncreaseOnFailure;
             Debug.Log($"Корабль получил {damagePenalty} урона!");
         }
     }
@@ -128,24 +139,37 @@ public class ShipTask : MonoBehaviour
     {
         Debug.Log("Задача выполнена!");
         parentZone.ClearTask(this);
-        // Если это задача на пушке, деактивируем ее, а не уничтожаем
+
         if (taskType == TaskType.Gun)
         {
             GetComponent<Cannon>()?.DeactivateTask();
         }
         else
         {
-            Destroy(gameObject); // Обычные задачи уничтожаем
+            ResetTask();
         }
+    }
+
+    // Этот метод будет вызываться, когда задача выполнена и должна снова скрыться
+    public void ResetTask()
+    {
+        // Сбрасываем все изменяемые состояния
+        Start();
+        gameObject.SetActive(false);
     }
 
     public float GetCurrentMadnessRate()
     {
-        return currentMadnessRate;
+        return currentbaseMadnessRate;
     }
 
     public float GetCurrentDamageInMadness()
     {
-        return currentDamageInMadness;
+        return currentbaseDamageInMadness;
+    }
+
+    public bool TaskAvailable()
+    {
+        return !isBeingWorkedOn;
     }
 }

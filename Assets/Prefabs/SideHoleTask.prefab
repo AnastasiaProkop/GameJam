@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 4f1ef37ae953c484bbc5d5e4049147e5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -125,10 +125,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskType: 2
   timeToComplete: 10
-  damageInMadness: 1
-  madnessRate: 0.5
+  baseDamageInMadness: 1
+  baseMadnessRate: 0.5
   failureTime: 20
   madnessPenalty: 10
   damagePenalty: 10
-  madnessRateIncreaseOnFailure: 0.25
-  damageInMadnessIncreaseOnFailure: 0.5
+  baseMadnessRateIncreaseOnFailure: 0.25
+  baseDamageInMadnessIncreaseOnFailure: 0.5

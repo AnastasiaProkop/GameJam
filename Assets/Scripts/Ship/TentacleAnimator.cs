@@ -1,46 +1,33 @@
 using UnityEngine;
-using System;
 
 public class TentacleAnimator : MonoBehaviour
 {
     private Animator animator;
-    public Action OnImpactAction;
-    public Action OnAnimationCompleteAction;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
     }
 
-    // TaskZone вызовет этот метод, чтобы запустить нужную анимацию
     public void PlayAttackAnimation(TaskType taskType)
     {
-        switch (taskType)
+        string stateName = GetAnimationStateName(taskType);
+        if (!string.IsNullOrEmpty(stateName))
         {
-            case TaskType.FloorHole:
-                animator.SetTrigger("OnStrikeFloor");
-                break;
-            case TaskType.Fire:
-                animator.SetTrigger("OnSpitFire");
-                break;
-            case TaskType.Gun:
-                animator.SetTrigger("OnGrabCannon");
-                break;
-            // добавить
+            animator.Play(stateName);
         }
     }
 
-
-    // Вызывается в кадре удара/плевка/хватки
-    public void OnImpactMoment()
+    private string GetAnimationStateName(TaskType taskType)
     {
-        OnImpactAction?.Invoke();
+        switch (taskType)
+        {
+            case TaskType.FloorHole: return "StrikeFloor";
+            case TaskType.Fire: return "SpitFire";
+            case TaskType.Gun: return "GrabCannon";
+            case TaskType.SideHole: return "StrikeSide";
+            default: return null;
+        }
     }
 
-    // Вызывается в последнем кадре анимации ухода под воду
-    public void OnRetreatComplete()
-    {
-        OnAnimationCompleteAction?.Invoke(); // Сообщаем, что сценка окончена
-        Destroy(gameObject);
-    }
 }

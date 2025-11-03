@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour
 {
-    [Tooltip("Ссылка на объект-подсветку")]
-    public GameObject highlightObject;
+    //[Tooltip("Ссылка на объект-подсветку")]
+    //public GameObject highlightObject;
+    public Transform animationAnchor;
     
     private ShipTask shipTask;
     public bool IsTaskActive { get; private set; }
@@ -12,7 +13,14 @@ public class Cannon : MonoBehaviour
     {
         shipTask = GetComponent<ShipTask>();
         shipTask.enabled = false; // Убедимся, что задача выключена
-        highlightObject.SetActive(false);
+        //highlightObject.SetActive(false);
+
+        if (animationAnchor == null)
+        {
+            Debug.LogWarning("У пушки не назначен AnimationAnchor! Будет использоваться ее центр.", this);
+            // В качестве запасного варианта используем transform самой пушки
+            animationAnchor = this.transform;
+        }
         IsTaskActive = false;
     }
 
@@ -21,15 +29,16 @@ public class Cannon : MonoBehaviour
     {
         shipTask.enabled = true;
         shipTask.Initialize(manager, zone); // Важно инициализировать
-        highlightObject.SetActive(true);
+        //highlightObject.SetActive(true);
         IsTaskActive = true;
+        Debug.Log("Пушку схватили");
     }
 
 
     public void DeactivateTask()
     {
         shipTask.enabled = false;
-        highlightObject.SetActive(false);
+        //highlightObject.SetActive(false);
         IsTaskActive = false;
     }
 }

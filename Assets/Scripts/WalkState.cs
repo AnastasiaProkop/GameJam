@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.AI;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class WalkState : State
@@ -10,35 +11,47 @@ public class WalkState : State
     public override void Enter()
     {
         base.Enter();
+        if (player.targetPos.x >= player.transform.position.x)
+        {
+            player.skeletonAnimation.AnimationState.SetAnimation(0, "go_front", true);
+        }
+        else
+        {
+            player.skeletonAnimation.AnimationState.SetAnimation(0, "go_back", true);
+        }
+        Debug.Log("Walk");
+        player.navMeshAgent.SetDestination(player.targetPos);
     }
 
     public override void Exit()
     {
         base.Exit();
+       // player.skeletonAnimation.AnimationState.SetAnimation(0, "go_back", false);
+       // player.skeletonAnimation.AnimationState.SetAnimation(0, "go_front", false);
+        
     }
     public override void Update()
     {
-        player.transform.position = Vector3.MoveTowards(player.transform.position, player.targetPos, Time.deltaTime * player.moveSpeed);
-        
-        if (Vector3.Distance(player.transform.position, player.targetPos) < 0.0005)
+
+        if (!player.navMeshAgent.pathPending)
         {
-            if (player.currentTag == "Gun")
+            if (player.navMeshAgent.remainingDistance <= player.navMeshAgent.stoppingDistance)
             {
-                stateMachine.ChangeState(player.shootState);
+                if (!player.navMeshAgent.hasPath || player.navMeshAgent.velocity.sqrMagnitude == 0f)
+                {
+    
+                    if (player.currentTag == "Gun")
+                        stateMachine.ChangeState(player.shootState);
+                    else if (player.currentTag == "FloorHole")
+                        stateMachine.ChangeState(player.fixFloorState);
+                    else if (player.currentTag == "SideHole")
+                        stateMachine.ChangeState(player.fixSideState);
+                    else if (player.currentTag == "Fire")
+                        stateMachine.ChangeState(player.putOutFireState);
+                    else
+                        stateMachine.ChangeState(player.idleState);
+                }
             }
-            if (player.currentTag == "FloorHole")
-            {
-                stateMachine.ChangeState(player.fixFloorState);
-            }
-            if (player.currentTag == "SideHole")
-            {
-                stateMachine.ChangeState(player.fixSideState);
-            }
-            if (player.currentTag == "Fire")
-            {
-                stateMachine.ChangeState(player.putOutFireState);
-            }
-            //stateMachine.ChangeState(player.idleState);
         }
 
         base.Update();
