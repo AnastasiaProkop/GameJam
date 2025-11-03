@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class TestChangeAtmosphere : MonoBehaviour
 {
@@ -20,26 +22,38 @@ public class TestChangeAtmosphere : MonoBehaviour
     [SerializeField] float DensityFogNormal = 0.03f;
     [SerializeField] float DensityFogMadness = 0.05f;
 
-    // источники света
+    // источники света 3д
+    [Header("3d lights")]
     [SerializeField] private Light dirLight;
     [SerializeField] Light[] nightLamps;
 
 
-    // свет для фазы безумия
+    [Header("3d light maps")]
     [SerializeField] private Texture2D[] nightColorMaps; // Lightmap-*_light.exr
     [SerializeField] private Texture2D[] nightDirMaps; // Lightmap-*_dir.png
 
+    // свет для фазы безумия 3д
     [SerializeField] private Color32 DirColorMadness = new Color32(223, 83, 233, 255);
     [SerializeField] private float DirIntensityMadness = 0.01f;
     [SerializeField] private float DirIndirectMadness = 5f;
     [SerializeField] private Vector3 DirRotationMadness = new Vector3(76.487f, -897.816f, -1325.621f);
     
-    //свет для фазы разума
+    //свет для фазы разума 3д
     [SerializeField] private Color32 DirColorNormal = new Color32(255, 255, 255, 255);
     [SerializeField] private float DirIntensityNormal = 1f;
     [SerializeField] private float DirIndirectNormal = 1f;
     [SerializeField] private Vector3 DirRotationNormal = new Vector3 (41.506f, -839.624f, -685.302f);
-    
+
+
+    // источники света 2д
+    [Header("2d lights")]
+    [SerializeField] private Light2D globalLight;          // Тип Global
+    [SerializeField] private List<Light2D> pointLights = new(); // Точечные (Point)
+
+    // настройки 2д света
+    [SerializeField, Range(0f, 5f)] private float globalIntensityNormal = 0.9f;
+    [SerializeField, Range(0f, 5f)] private float globalIntensityMadness = 0.17f;
+
     void OnEnable()               
     {
         elapsed = 0f;
@@ -116,12 +130,21 @@ public class TestChangeAtmosphere : MonoBehaviour
         dirLight.bounceIntensity = DirIndirectNormal;
         dirLight.transform.rotation = Quaternion.Euler(DirRotationNormal);
 
-        // для отдельных ламп
+        // для отдельных ламп 3d
         foreach (var l in nightLamps) if (l) l.enabled = false;
 
-        // для карт
+        // для карт 3d
         LightmapSettings.lightmaps = System.Array.Empty<LightmapData>();
 
+        // для 2д света точечного
+        for (int i = 0; i < pointLights.Count; i++)
+        {
+            if (pointLights[i] == null) continue;
+            pointLights[i].enabled = false;
+        }
+
+        // 2d глобальный
+        globalLight.intensity = globalIntensityNormal;
     }
 
     void SetNight()
@@ -131,10 +154,10 @@ public class TestChangeAtmosphere : MonoBehaviour
         dirLight.bounceIntensity = DirIndirectMadness;
         dirLight.transform.rotation = Quaternion.Euler(DirRotationMadness);
 
-        // для отдельных ламп
+        // для отдельных ламп 3d
         foreach (var l in nightLamps) if (l) l.enabled = true;
         
-        // для карт
+        // для карт 3d
         LightmapSettings.lightmapsMode = LightmapsMode.CombinedDirectional; // возможно не надо...
 
         int n = Mathf.Max(nightColorMaps?.Length ?? 0,
@@ -150,7 +173,16 @@ public class TestChangeAtmosphere : MonoBehaviour
         }
 
         LightmapSettings.lightmaps = data;
-        
+
+        // для 2д света точечного
+        for (int i = 0; i < pointLights.Count; i++)
+        {
+            if (pointLights[i] == null) continue;
+            pointLights[i].enabled = true;
+        }
+
+        // 2d глобальный
+        globalLight.intensity = globalIntensityMadness;
 
     }
 
