@@ -6,6 +6,7 @@ public class ShipManager : MonoBehaviour
 {
     public enum ShipState { Normal, Madness }
     public ShipState CurrentState { get; private set; }
+    public float TimeFromStart { get; private set; } = 0;
 
 
     [Header("Настройки здоровья")]
@@ -56,6 +57,8 @@ public class ShipManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        TimeFromStart += Time.deltaTime;
+
         //Пытаемся создать задачу
         HandleTaskSpawning();
 
