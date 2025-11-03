@@ -4,7 +4,7 @@ using UnityEngine.Windows;
 
 public abstract class State
 {
-
+    SoundManager soundManager;
 
     protected StateMachine stateMachine;
     protected string animBoolName;

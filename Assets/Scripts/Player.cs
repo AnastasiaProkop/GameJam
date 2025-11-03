@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     public SkeletonAnimation skeletonAnimation {  get; private set; }
     public Animator animatorEffects;
 
-
+    SoundManager soundManager;
     private void Awake()
     {
         targetPos = transform.position;
@@ -75,6 +75,7 @@ public class Player : MonoBehaviour
 
     private void OnMouseDown()
     {
+        
         dragedSailor.SetActive(true);
         mousePos = Input.mousePosition - GetMousePos();
     }
