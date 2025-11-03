@@ -35,14 +35,15 @@ public class Player : MonoBehaviour
     {
         targetPos = transform.position;
         stateMachine = new StateMachine();
+
+        skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+
         idleState = new IdleState(this, stateMachine, "idle");
         walkState = new WalkState(this, stateMachine, "");
         putOutFireState = new PutOutFireState(this, stateMachine, "IsPutOutFire");
         shootState = new ShootState(this, stateMachine, "IsShoot");
         fixFloorState = new FixFloorState(this, stateMachine, "water");
         fixSideState = new FixSideState(this, stateMachine, "bort");
-
-        skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
 
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
