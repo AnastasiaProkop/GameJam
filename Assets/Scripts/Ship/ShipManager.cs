@@ -34,6 +34,15 @@ public class ShipManager : MonoBehaviour
     public float taskSpawnInterval = 15f;
     private float taskSpawnTimer;
 
+    [Header("Настройки Монет")]
+    [Tooltip("Как часто (в секундах) игра добавляет монетки")]
+    public float coinAddInterval = 30f;
+    private float coinAddTimer;
+
+    [Tooltip("Сколько монеток добавляется за интервал")]
+    public int coinIncreaseRate = 1;
+    public int CurrentCoins { get; private set; } = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -41,6 +50,7 @@ public class ShipManager : MonoBehaviour
         CurrentState = ShipState.Normal;
         CurrentMadness = 0f; // Начинаем с нуля
         taskSpawnTimer = taskSpawnInterval;
+        coinAddTimer = coinAddInterval;
     }
 
     // Update is called once per frame
@@ -48,6 +58,9 @@ public class ShipManager : MonoBehaviour
     {
         //Пытаемся создать задачу
         HandleTaskSpawning();
+
+        //Добавляем монетки
+        IncreaseCoins();
 
         //Обновляем состояние
         switch (CurrentState)
@@ -70,6 +83,16 @@ public class ShipManager : MonoBehaviour
         {
             SpawnNewTask();
             taskSpawnTimer = taskSpawnInterval;
+        }
+    }
+
+    private void IncreaseCoins()
+    {
+        coinAddTimer -= Time.deltaTime;
+        if (coinAddTimer <= 0)
+        {
+            CurrentCoins += coinIncreaseRate;
+            coinAddTimer = coinAddInterval;
         }
     }
 
