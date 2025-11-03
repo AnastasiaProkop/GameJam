@@ -15,7 +15,7 @@ public class ShipTask : MonoBehaviour
 
     [Header("Параметры Задачи")]
     [Tooltip("Сколько времени (в секундах) нужно, чтобы выполнить задачу")]
-    public float timeToComplete = 10f;
+    public float timeToComplete = 5.0f;
     
     [Tooltip("Какой урон в секунду наносит эта задача в состоянии 'Madness'")]
     public float baseDamageInMadness = 1f; 
@@ -39,6 +39,7 @@ public class ShipTask : MonoBehaviour
     [Tooltip("Примерная длительность анимации появления для этой задачи (в секундах)")]
     public float appearanceAnimationDuration = 4.0f;
     public float taskCreationTiming = 1.0f;
+    private Animator taskAnimator;
     
     // Приватные переменные для отслеживания состояния
     private float currentFailureTimer;
@@ -56,6 +57,11 @@ public class ShipTask : MonoBehaviour
     {
         shipManager = manager;
         parentZone = zone;
+    }
+
+    void Awake()
+    {
+        taskAnimator = GetComponent<Animator>();
     }
 
     void Start()
@@ -86,6 +92,16 @@ public class ShipTask : MonoBehaviour
         else if (shipManager.CurrentState == ShipManager.ShipState.Madness)
         {
             shipManager.TakeDamage(currentbaseDamageInMadness * Time.deltaTime);
+        }
+    }
+
+    public void ActivateTask(ShipManager manager, ShipTaskZone zone)
+    {
+        Initialize(manager, zone);
+        gameObject.SetActive(true);
+        if (taskAnimator != null)
+        {
+            taskAnimator.SetBool("IsActive", true);
         }
     }
     
