@@ -8,6 +8,8 @@ public class ShootState : State
 
     public override void Enter()
     {
+        player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
+
         player.currentZone = player.nextZone;
 
         player.shipManager.StartWorkInZone(
@@ -17,6 +19,7 @@ public class ShootState : State
 
     public override void Exit()
     {
+
         player.shipManager.StopWorkInZone(
             TaskType.Gun, player.currentZone - 1);
         base.Exit();
@@ -24,6 +27,11 @@ public class ShootState : State
 
     public override void Update()
     {
+        if (!player.TaskAvailable())
+        { 
+            player.stateMachine.ChangeState(player.idleState);
+            player.ClearCurrentTask();
+        }
         base.Update();
     }
 }

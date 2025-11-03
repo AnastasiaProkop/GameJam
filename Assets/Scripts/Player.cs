@@ -1,16 +1,10 @@
 ﻿using Spine.Unity;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject ship;
-    public ShipManager shipManager { get; private set; }
+    public ShipManager shipManager;
     public int currentZone { get; set; } = 0;
     public int nextZone { get; private set; } = 0;
 
@@ -21,6 +15,7 @@ public class Player : MonoBehaviour
     public ShootState shootState { get; private set; }
     public FixFloorState fixFloorState { get; private set; }
     public FixSideState fixSideState { get; private set; }
+    public FailState failState { get; private set; }
 
     private Vector3 mousePos;
     public Vector3 targetPos { get; private set; }
@@ -33,7 +28,8 @@ public class Player : MonoBehaviour
 
     public NavMeshAgent navMeshAgent { get; private set; }
 
-    [SerializeField] public SkeletonAnimation skeletonAnimation {  get; private set; }
+    public SkeletonAnimation skeletonAnimation {  get; private set; }
+    public Animator animatorEffects;
 
 
     private void Awake()
@@ -43,13 +39,14 @@ public class Player : MonoBehaviour
         idleState = new IdleState(this, stateMachine, "idle");
         walkState = new WalkState(this, stateMachine, "");
         putOutFireState = new PutOutFireState(this, stateMachine, "IsPutOutFire");
-        shootState = new ShootState(this, stateMachine, "IsShoot");
+        shootState = new ShootState(this, stateMachine, "pushka");
         fixFloorState = new FixFloorState(this, stateMachine, "water");
         fixSideState = new FixSideState(this, stateMachine, "bort");
+        failState = new FailState(this, stateMachine, "fail");
 
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+       // animatorEffects = GetComponentInChildren<Animator>();
 
-        shipManager = ship.GetComponent<ShipManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void Start()
@@ -57,6 +54,8 @@ public class Player : MonoBehaviour
         stateMachine.Initialize(idleState);
 
         dragedSailor.SetActive(false);
+
+        animatorEffects.gameObject.SetActive(false);
 
         navMeshAgent.updateRotation = false; 
         navMeshAgent.updateUpAxis = false;   
@@ -117,7 +116,6 @@ public class Player : MonoBehaviour
 
                     if (Vector3.Distance(transform.position, targetPos) > 0.1f)
                     {
-                        //navMeshAgent.SetDestination(targetPos);
                         stateMachine.ChangeState(walkState);
                     }
                 }
@@ -133,7 +131,12 @@ public class Player : MonoBehaviour
 
     }
 
-    private bool TaskAvailable()
+    public void ClearCurrentTask()
+    {
+        currentTag = "";
+        nextZone = 0;
+    }
+    public bool TaskAvailable()
     {
         TaskType? type =
             currentTag == "Gun"       ? TaskType.Gun       :
@@ -141,8 +144,9 @@ public class Player : MonoBehaviour
             currentTag == "SideHole"  ? TaskType.SideHole  :
             currentTag == "Fire"      ? TaskType.Fire      :
                                         null               ;
-        if (type == null) return true;
+        
+        if (type == null) return false;
 
-        return shipManager.TaskAvailableInZone((TaskType)type, nextZone - 1);
+        return shipManager.IsTaskActiveInZone((TaskType)type, nextZone - 1);
     }
 }

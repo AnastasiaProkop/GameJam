@@ -4245,6 +4245,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.010772225, y: 0.014898719, z: 0.03487657}
   m_Center: {x: 0, y: 0.0074493634, z: -0.006199772}
+--- !u!1 &1916731214 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 013bbf52831cb0b43bb1eadace5a38d5, type: 3}
+  m_PrefabInstance: {fileID: 1846501057}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1918335760 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 84728f7d3cea543be811618327cbacda, type: 3}
@@ -4533,6 +4538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 338ccea91502da44da1df12330d66481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 1916731214}
   dragedSailor: {fileID: 758415431}
 --- !u!4 &1994231905
 Transform:
