@@ -12,6 +12,4 @@
             </ui:Slider>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:MultiColumnTreeView />
-    <ui:MultiColumnTreeView />
 </ui:UXML>
