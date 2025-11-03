@@ -10,6 +10,8 @@ public class FixSideState : State
     {
         player.currentZone = player.nextZone;
 
+        player.animatorEffects.gameObject.SetActive(true);
+
         player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
         player.shipManager.StartWorkInZone(
             TaskType.SideHole, player.currentZone - 1);
@@ -18,6 +20,7 @@ public class FixSideState : State
 
     public override void Exit()
     {
+        player.animatorEffects.gameObject.SetActive(false);
         //player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", false);
         player.shipManager.StopWorkInZone(
             TaskType.SideHole, player.currentZone - 1);
