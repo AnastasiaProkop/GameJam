@@ -6,6 +6,7 @@ public class ShipManager : MonoBehaviour
 {
     public enum ShipState { Normal, Madness }
     public ShipState CurrentState { get; private set; }
+    public float TimeFromStart { get; private set; } = 0;
 
 
     [Header("Настройки здоровья")]
@@ -22,6 +23,8 @@ public class ShipManager : MonoBehaviour
     public float madnessBaseIncreaseRate = 1.0f;
     [Tooltip("Насколько быстро полоса Безумия убывает в состоянии Madness (единиц в секунду).")]
     public float madnessDecayRate = 5.0f;
+    private ChangeAtmosphere sceneAtmosphere;
+
 
     // Текущее значение полосы Безумия
     public float CurrentMadness { get; private set; }
@@ -34,6 +37,15 @@ public class ShipManager : MonoBehaviour
     public float taskSpawnInterval = 15f;
     private float taskSpawnTimer;
 
+    [Header("Настройки Монет")]
+    [Tooltip("Как часто (в секундах) игра добавляет монетки")]
+    public float coinAddInterval = 30f;
+    private float coinAddTimer;
+
+    [Tooltip("Сколько монеток добавляется за интервал")]
+    public int coinIncreaseRate = 1;
+    public int CurrentCoins { get; private set; } = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -41,13 +53,20 @@ public class ShipManager : MonoBehaviour
         CurrentState = ShipState.Normal;
         CurrentMadness = 0f; // Начинаем с нуля
         taskSpawnTimer = taskSpawnInterval;
+        coinAddTimer = coinAddInterval;
+        sceneAtmosphere = transform.GetComponent<ChangeAtmosphere>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        TimeFromStart += Time.deltaTime;
+
         //Пытаемся создать задачу
         HandleTaskSpawning();
+
+        //Добавляем монетки
+        IncreaseCoins();
 
         //Обновляем состояние
         switch (CurrentState)
@@ -70,6 +89,16 @@ public class ShipManager : MonoBehaviour
         {
             SpawnNewTask();
             taskSpawnTimer = taskSpawnInterval;
+        }
+    }
+
+    private void IncreaseCoins()
+    {
+        coinAddTimer -= Time.deltaTime;
+        if (coinAddTimer <= 0)
+        {
+            CurrentCoins += coinIncreaseRate;
+            coinAddTimer = coinAddInterval;
         }
     }
 
@@ -136,6 +165,7 @@ public class ShipManager : MonoBehaviour
             CurrentMadness = maxMadnessValue;
             CurrentState = ShipState.Madness;
             SoundManager.Instance.ChangeOnMad();
+            sceneAtmosphere.ToMadness();
             Debug.Log("КОРАБЛЬ ОХВАЧЕН БЕЗУМИЕМ!");
         }
     }
@@ -152,6 +182,7 @@ public class ShipManager : MonoBehaviour
             CurrentMadness = 0;
             CurrentState = ShipState.Normal;
             SoundManager.Instance.ChangeOnNormal();
+            sceneAtmosphere.ToNormal();
             Debug.Log("Безумие отступило. Корабль в обычном состоянии.");
         }
 
@@ -197,13 +228,6 @@ public class ShipManager : MonoBehaviour
         if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
 
         shipTaskZones[zoneIndex].StopWork(task);
-    }
-
-    public bool TaskAvailableInZone(TaskType task, int zoneIndex)
-    {
-        if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return false;
-
-        return shipTaskZones[zoneIndex].TaskAvailable(task);
     }
 
     public bool IsTaskActiveInZone(TaskType task, int zoneIndex)

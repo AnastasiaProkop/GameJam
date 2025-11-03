@@ -1,16 +1,10 @@
 ﻿using Spine.Unity;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject ship;
-    public ShipManager shipManager { get; private set; }
+    public ShipManager shipManager;
     public int currentZone { get; set; } = 0;
     public int nextZone { get; private set; } = 0;
 
@@ -53,7 +47,6 @@ public class Player : MonoBehaviour
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
        // animatorEffects = GetComponentInChildren<Animator>();
 
-        shipManager = ship.GetComponent<ShipManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
     private void Start()
@@ -155,6 +148,6 @@ public class Player : MonoBehaviour
         
         if (type == null) return false;
 
-        return (/*shipManager.TaskAvailableInZone((TaskType)type, nextZone - 1) &&*/ shipManager.IsTaskActiveInZone((TaskType)type, nextZone - 1));
+        return shipManager.IsTaskActiveInZone((TaskType)type, nextZone - 1);
     }
 }
