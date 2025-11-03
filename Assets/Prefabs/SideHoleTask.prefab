@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &970798375120648999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2499868016374853922}
+  m_Layer: 0
+  m_Name: AnimationAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2499868016374853922
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970798375120648999}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.6211273, y: 0.35052896, z: -0.046148922, w: -0.69942886}
+  m_LocalPosition: {x: -0.5970196, y: -1.2654636, z: 9.366095}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8419661736203029056}
+  m_LocalEulerAnglesHint: {x: 236.774, y: 88.187, z: -114.145996}
 --- !u!1 &2851985639860906037
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,6 +152,7 @@ Transform:
   m_Children:
   - {fileID: 2832373646019124628}
   - {fileID: 7421018145014762533}
+  - {fileID: 2499868016374853922}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 38.81, y: 13.822, z: 63.098}
 --- !u!136 &3273538056722267791
