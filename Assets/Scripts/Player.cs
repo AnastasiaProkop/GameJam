@@ -1,14 +1,9 @@
 ﻿using Spine.Unity;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
     public GameObject ship;
     public ShipManager shipManager { get; private set; }
     public int currentZone { get; set; } = 0;

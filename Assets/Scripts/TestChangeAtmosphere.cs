@@ -1,0 +1,202 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
+public class TestChangeAtmosphere : MonoBehaviour
+{
+	float elapsed;
+    float timer = 10f;
+    bool isNormal = true;
+
+    // для воды
+    [SerializeField] private Renderer waterRenderer;
+    private Color32 DeepNormal = new Color32(12, 104, 192, 255);
+    private Color32 DeepMadness = new Color32(12, 192, 73, 255);
+    int DeepID = Shader.PropertyToID("Color_7D9A58EC");
+    Material WaterMat;
+
+    // для тумана
+    [SerializeField] Color32 ColorFogNormal = new Color32(106, 145, 219, 255);
+    [SerializeField] Color32 ColorFogMadness = new Color32(116, 106, 219, 255);
+    [SerializeField] float DensityFogNormal = 0.03f;
+    [SerializeField] float DensityFogMadness = 0.05f;
+
+    // источники света 3д
+    [Header("3d lights")]
+    [SerializeField] private Light dirLight;
+    [SerializeField] Light[] nightLamps;
+
+
+    [Header("3d light maps")]
+    [SerializeField] private Texture2D[] nightColorMaps; // Lightmap-*_light.exr
+    [SerializeField] private Texture2D[] nightDirMaps; // Lightmap-*_dir.png
+
+    // свет для фазы безумия 3д
+    [SerializeField] private Color32 DirColorMadness = new Color32(223, 83, 233, 255);
+    [SerializeField] private float DirIntensityMadness = 0.01f;
+    [SerializeField] private float DirIndirectMadness = 5f;
+    [SerializeField] private Vector3 DirRotationMadness = new Vector3(76.487f, -897.816f, -1325.621f);
+    
+    //свет для фазы разума 3д
+    [SerializeField] private Color32 DirColorNormal = new Color32(255, 255, 255, 255);
+    [SerializeField] private float DirIntensityNormal = 1f;
+    [SerializeField] private float DirIndirectNormal = 1f;
+    [SerializeField] private Vector3 DirRotationNormal = new Vector3 (41.506f, -839.624f, -685.302f);
+
+
+    // источники света 2д
+    [Header("2d lights")]
+    [SerializeField] private Light2D globalLight;          // Тип Global
+    [SerializeField] private List<Light2D> pointLights = new(); // Точечные (Point)
+
+    // настройки 2д света
+    [SerializeField, Range(0f, 5f)] private float globalIntensityNormal = 0.9f;
+    [SerializeField, Range(0f, 5f)] private float globalIntensityMadness = 0.17f;
+
+    void OnEnable()               
+    {
+        elapsed = 0f;
+        isNormal = true;
+
+        // вода
+        WaterMat = waterRenderer.material;
+        if (waterRenderer == null) {
+            Debug.Log($"No renderer!");
+            return;
+        }
+        if (WaterMat == null) {
+            Debug.Log($"No material!");
+            return;
+        }
+        waterRenderer.SetPropertyBlock(null);
+        Debug.Log($"MAT: {WaterMat.name} | SHADER: {WaterMat.shader.name}");
+        DumpProps(WaterMat);
+
+        //свет
+        SetDay();
+
+    }
+
+    void Update()
+    {
+        elapsed += Time.deltaTime;
+        if (elapsed >= timer)
+        {
+            elapsed = 0f;
+            ChangeState();
+            isNormal = !isNormal;
+        }
+    }
+
+    void ChangeState()
+    {
+        if (isNormal == true)
+        {
+            // ф-ция применения параметров для безумия
+            ToMadness();
+
+        } else
+        {
+            // ф-ция применения параметров для нормала
+            ToNormal();
+        }
+
+    }
+
+    void ToNormal()
+    {
+        Debug.Log($"To normal state!");
+        WaterMat.SetColor(DeepID, DeepNormal);
+        RenderSettings.fogColor = ColorFogNormal;
+        RenderSettings.fogDensity = DensityFogNormal;
+        SetDay();
+    }
+
+    void ToMadness()
+    {
+        Debug.Log($"To madness state!");
+        WaterMat.SetColor(DeepID, DeepMadness);
+        RenderSettings.fogColor = ColorFogMadness;
+        RenderSettings.fogDensity = DensityFogMadness;
+        SetNight();
+    }
+
+    void SetDay()
+    {
+        
+        dirLight.color = DirColorNormal;
+        dirLight.intensity = DirIntensityNormal;
+        dirLight.bounceIntensity = DirIndirectNormal;
+        dirLight.transform.rotation = Quaternion.Euler(DirRotationNormal);
+
+        // для отдельных ламп 3d
+        foreach (var l in nightLamps) if (l) l.enabled = false;
+
+        // для карт 3d
+        LightmapSettings.lightmaps = System.Array.Empty<LightmapData>();
+
+        // для 2д света точечного
+        for (int i = 0; i < pointLights.Count; i++)
+        {
+            if (pointLights[i] == null) continue;
+            pointLights[i].enabled = false;
+        }
+
+        // 2d глобальный
+        globalLight.intensity = globalIntensityNormal;
+    }
+
+    void SetNight()
+    {
+        dirLight.color = DirColorMadness;
+        dirLight.intensity = DirIntensityMadness;
+        dirLight.bounceIntensity = DirIndirectMadness;
+        dirLight.transform.rotation = Quaternion.Euler(DirRotationMadness);
+
+        // для отдельных ламп 3d
+        foreach (var l in nightLamps) if (l) l.enabled = true;
+        
+        // для карт 3d
+        LightmapSettings.lightmapsMode = LightmapsMode.CombinedDirectional; // возможно не надо...
+
+        int n = Mathf.Max(nightColorMaps?.Length ?? 0,
+                          nightDirMaps?.Length ?? 0);
+
+        var data = new LightmapData[n];
+        for (int i = 0; i < n; i++)
+        {
+            var d = new LightmapData();
+            if (nightColorMaps != null && i < nightColorMaps.Length) d.lightmapColor = nightColorMaps[i];
+            if (nightDirMaps != null && i < nightDirMaps.Length) d.lightmapDir = nightDirMaps[i];
+            data[i] = d;
+        }
+
+        LightmapSettings.lightmaps = data;
+
+        // для 2д света точечного
+        for (int i = 0; i < pointLights.Count; i++)
+        {
+            if (pointLights[i] == null) continue;
+            pointLights[i].enabled = true;
+        }
+
+        // 2d глобальный
+        globalLight.intensity = globalIntensityMadness;
+
+    }
+
+    void DumpProps(Material m)
+    {
+        var s = m.shader;
+        for (int i = 0; i < s.GetPropertyCount(); i++)
+        {
+            var t = s.GetPropertyType(i);
+            if (t == UnityEngine.Rendering.ShaderPropertyType.Color ||
+                t == UnityEngine.Rendering.ShaderPropertyType.Vector)
+            {
+                Debug.Log($"Prop: {s.GetPropertyName(i)} ({t})");
+            }
+        }
+    }
+}
