@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class TestChangeAtmosphere : MonoBehaviour
+public class ChangeAtmosphere : MonoBehaviour
 {
-	float elapsed;
-    float timer = 10f;
-    bool isNormal = true;
 
     // для воды
     [SerializeField] private Renderer waterRenderer;
@@ -56,9 +53,6 @@ public class TestChangeAtmosphere : MonoBehaviour
 
     void OnEnable()               
     {
-        elapsed = 0f;
-        isNormal = true;
-
         // вода
         WaterMat = waterRenderer.material;
         if (waterRenderer == null) {
@@ -80,31 +74,10 @@ public class TestChangeAtmosphere : MonoBehaviour
 
     void Update()
     {
-        elapsed += Time.deltaTime;
-        if (elapsed >= timer)
-        {
-            elapsed = 0f;
-            ChangeState();
-            isNormal = !isNormal;
-        }
-    }
-
-    void ChangeState()
-    {
-        if (isNormal == true)
-        {
-            // ф-ция применения параметров для безумия
-            ToMadness();
-
-        } else
-        {
-            // ф-ция применения параметров для нормала
-            ToNormal();
-        }
 
     }
 
-    void ToNormal()
+    public void ToNormal()
     {
         Debug.Log($"To normal state!");
         WaterMat.SetColor(DeepID, DeepNormal);
@@ -113,7 +86,7 @@ public class TestChangeAtmosphere : MonoBehaviour
         SetDay();
     }
 
-    void ToMadness()
+    public void ToMadness()
     {
         Debug.Log($"To madness state!");
         WaterMat.SetColor(DeepID, DeepMadness);

@@ -23,6 +23,8 @@ public class ShipManager : MonoBehaviour
     public float madnessBaseIncreaseRate = 1.0f;
     [Tooltip("Насколько быстро полоса Безумия убывает в состоянии Madness (единиц в секунду).")]
     public float madnessDecayRate = 5.0f;
+    private ChangeAtmosphere sceneAtmosphere;
+
 
     // Текущее значение полосы Безумия
     public float CurrentMadness { get; private set; }
@@ -52,6 +54,7 @@ public class ShipManager : MonoBehaviour
         CurrentMadness = 0f; // Начинаем с нуля
         taskSpawnTimer = taskSpawnInterval;
         coinAddTimer = coinAddInterval;
+        sceneAtmosphere = transform.GetComponent<ChangeAtmosphere>();
     }
 
     // Update is called once per frame
@@ -161,6 +164,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = maxMadnessValue;
             CurrentState = ShipState.Madness;
+            sceneAtmosphere.ToMadness();
             Debug.Log("КОРАБЛЬ ОХВАЧЕН БЕЗУМИЕМ!");
         }
     }
@@ -176,6 +180,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = 0;
             CurrentState = ShipState.Normal;
+            sceneAtmosphere.ToNormal();
             Debug.Log("Безумие отступило. Корабль в обычном состоянии.");
         }
 
@@ -221,13 +226,6 @@ public class ShipManager : MonoBehaviour
         if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
 
         shipTaskZones[zoneIndex].StopWork(task);
-    }
-
-    public bool TaskAvailableInZone(TaskType task, int zoneIndex)
-    {
-        if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return false;
-
-        return shipTaskZones[zoneIndex].TaskAvailable(task);
     }
 
     public bool IsTaskActiveInZone(TaskType task, int zoneIndex)
