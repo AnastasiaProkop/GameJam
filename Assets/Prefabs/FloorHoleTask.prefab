@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a41668de4f021e84caa1eef71462593a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taskType: 3
+  taskType: 1
   timeToComplete: 10
   baseDamageInMadness: 1
   baseMadnessRate: 0.5
@@ -132,3 +132,5 @@ MonoBehaviour:
   damagePenalty: 10
   baseMadnessRateIncreaseOnFailure: 0.25
   baseDamageInMadnessIncreaseOnFailure: 0.5
+  appearanceAnimationDuration: 4
+  taskCreationTiming: 1
