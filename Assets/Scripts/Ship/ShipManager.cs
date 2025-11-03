@@ -87,7 +87,11 @@ public class ShipManager : MonoBehaviour
         taskSpawnTimer -= Time.deltaTime;
         if (taskSpawnTimer <= 0)
         {
-            SpawnNewTask();
+            if (CurrentState == ShipState.Normal)
+                SpawnNewTask();
+            else if (CurrentState == ShipState.Madness)
+                SpawnNewMadnessTask();
+
             taskSpawnTimer = taskSpawnInterval;
         }
     }
@@ -143,6 +147,27 @@ public class ShipManager : MonoBehaviour
         }
     }
 
+    private void SpawnNewMadnessTask()
+    {
+        // 1. Ищем все зоны, которые еще не заполнены до своего лимита.
+        List<ShipTaskZone> availableZones = shipTaskZones.Where(zone => !zone.IsFull()).ToList();
+
+        if (availableZones.Count > 1)
+        {
+            // 2. Выбираем случайную и противоположную ей
+            int zoneNumber = Random.Range(0, availableZones.Count);
+            ShipTaskZone randomZone = availableZones[zoneNumber];
+            ShipTaskZone oppositeZone = availableZones[(zoneNumber + 4) % 8];
+
+            // 3. Проверяем возможность и создаём противоположные задачи
+            if (randomZone.CheckTaskSpawnable())
+            {
+                randomZone.TrySpawnNewTask(this);
+                oppositeZone.ActivateOppositeTaskSpot();
+            }
+        }
+    }
+
     private void UpdateNormalState()
     {
         float totalIncreaseRate = madnessBaseIncreaseRate;
@@ -181,6 +206,7 @@ public class ShipManager : MonoBehaviour
             CurrentMadness = 0;
             CurrentState = ShipState.Normal;
             sceneAtmosphere.ToNormal();
+            shipTaskZones.ForEach(taskZone => taskZone.DeactivateOppositeTaskSpot());
             Debug.Log("Безумие отступило. Корабль в обычном состоянии.");
         }
 
@@ -218,14 +244,28 @@ public class ShipManager : MonoBehaviour
     {
         if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
 
-        shipTaskZones[zoneIndex].StartWork(task);
+        if (CurrentState == ShipState.Normal)
+        {
+            shipTaskZones[zoneIndex].StartWork(task);
+        }
+        else
+        {
+            shipTaskZones[(zoneIndex + 4) % 8].StartOppositeWork();
+        }
     }
 
     public void StopWorkInZone(TaskType task, int zoneIndex)
     {
         if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
 
-        shipTaskZones[zoneIndex].StopWork(task);
+        if (CurrentState == ShipState.Normal)
+        {
+            shipTaskZones[zoneIndex].StopWork(task);
+        }
+        else
+        {
+            shipTaskZones[(zoneIndex + 4) % 8].StopOppositeWork();
+        }
     }
 
     public bool IsTaskActiveInZone(TaskType task, int zoneIndex)

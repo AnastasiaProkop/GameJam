@@ -44,7 +44,7 @@ public class WalkState : State
                             stateMachine.ChangeState(player.shootState);
                         else if (player.currentTag == "FloorHole")
                             stateMachine.ChangeState(player.fixFloorState);
-                        else if (player.currentTag == "SideHole")
+                        else if (player.currentTag == "SideHole" || player.currentTag == "Opposite")
                             stateMachine.ChangeState(player.fixSideState);
                         else if (player.currentTag == "Fire")
                             stateMachine.ChangeState(player.putOutFireState);

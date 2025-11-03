@@ -8,6 +8,7 @@ TagManager:
   - Gun
   - SideHole
   - Fire
+  - Opposite
   layers:
   - Default
   - TransparentFX

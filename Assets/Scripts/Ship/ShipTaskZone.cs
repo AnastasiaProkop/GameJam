@@ -22,7 +22,8 @@ public class ShipTaskZone : MonoBehaviour
     public List<PrePlacedTask> prePlacedTasks;
 
     [Tooltip("Ссылка на пушку, которую может захватить щупальце")]
-    public Cannon targetCannon; 
+    public Cannon targetCannon;
+    public GameObject oppositeTaskSpot;
 
     public List<ShipTask> TaskList { get; private set; }
     //[SerializeField, Min(1)] private int MaxTaskQuantity = 2;
@@ -59,6 +60,20 @@ public class ShipTaskZone : MonoBehaviour
     public void ClearTask(ShipTask task)
     {
         TaskList.Remove(task);
+    }
+
+    public bool CheckTaskSpawnable()
+    {
+        if (isSpawning || IsFull()) return false;
+
+        // Находим все задачи, которые еще не активны
+        var availableTypes = taskRegistry.Keys.Where(type => !IsTaskActive(type)).ToList();
+        if (targetCannon != null && !targetCannon.IsTaskActive)
+        {
+            availableTypes.Add(TaskType.Gun);
+        }
+
+        return availableTypes.Count > 0;
     }
 
     public void TrySpawnNewTask(ShipManager manager)
@@ -141,14 +156,34 @@ public class ShipTaskZone : MonoBehaviour
         }
     }
 
+    public void ActivateOppositeTaskSpot()
+    {
+        oppositeTaskSpot.SetActive(true);
+    }
+
+    public void DeactivateOppositeTaskSpot()
+    {
+        oppositeTaskSpot.SetActive(false);
+    }
+
     public void StartWork(TaskType task)
     {
         TaskList.Find(shipTask => shipTask.taskType == task)?.StartWork();
     }
 
+    public void StartOppositeWork()
+    {
+        TaskList.ForEach(shipTask => shipTask.StartWork());
+    }
+
     public void StopWork(TaskType task)
     {
         TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
+    }
+
+    public void StopOppositeWork()
+    {
+        TaskList.ForEach(shipTask => shipTask.StopWork());
     }
 
     private Transform GetAnchorForTaskType(TaskType type)

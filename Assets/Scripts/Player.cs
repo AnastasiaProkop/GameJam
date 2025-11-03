@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hitInfo))
             {
-                if (hitInfo.collider.CompareTag("Gun") || hitInfo.collider.CompareTag("FloorHole") || hitInfo.collider.CompareTag("Fire") || hitInfo.collider.CompareTag("SideHole")) { 
+                if (hitInfo.collider.CompareTag("Gun") || hitInfo.collider.CompareTag("FloorHole") || hitInfo.collider.CompareTag("Fire") || hitInfo.collider.CompareTag("SideHole") || hitInfo.collider.CompareTag("Opposite")) { 
                     targetPos = ray.GetPoint(distance);
                     currentTag = hitInfo.collider.tag;
 
@@ -138,6 +138,8 @@ public class Player : MonoBehaviour
     }
     public bool TaskAvailable()
     {
+        if (currentTag == "Opposite") return true;
+
         TaskType? type =
             currentTag == "Gun"       ? TaskType.Gun       :
             currentTag == "FloorHole" ? TaskType.FloorHole :
