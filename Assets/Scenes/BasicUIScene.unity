@@ -3904,7 +3904,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1884988058}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -4591,6 +4591,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 962677242}
   - {fileID: 654261106}
   - {fileID: 1366787639}
   - {fileID: 1846501057}
@@ -4600,4 +4601,3 @@ SceneRoots:
   - {fileID: 2086874001}
   - {fileID: 1994231905}
   - {fileID: 17510180}
-  - {fileID: 962677242}
