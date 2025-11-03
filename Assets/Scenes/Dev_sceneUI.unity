@@ -161,6 +161,8 @@ MonoBehaviour:
   - {fileID: 1721448619}
   - {fileID: 2120857572}
   taskSpawnInterval: 15
+  coinAddInterval: 30
+  coinIncreaseRate: 1
 --- !u!4 &46329862 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 013bbf52831cb0b43bb1eadace5a38d5, type: 3}
@@ -1654,8 +1656,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 338ccea91502da44da1df12330d66481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ship: {fileID: 46329855}
+  shipManager: {fileID: 0}
   dragedSailor: {fileID: 758415431}
+  animatorEffects: {fileID: 0}
 --- !u!4 &1994231905
 Transform:
   m_ObjectHideFlags: 0

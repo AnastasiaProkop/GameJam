@@ -106,13 +106,14 @@ namespace UI
                 GetPauseMenu();
             }
 
-            coinLabel.text = "0"; // # SHOULD BE MONEY VAR
+            coinLabel.text = ship.CurrentCoins.ToString(); // # SHOULD BE MONEY VAR
+            Debug.Log(ship.CurrentCoins.ToString());
 
             // TOGGLE FOR EASY GAME OVER
-            // if (!paused && ship.CurrentHealth <= 0)
-            // {
-            //     Lose();
-            // }
+            if (!paused && ship.CurrentHealth <= 0)
+            {
+                Lose();
+            }
         }
 
         public void StartGame()
@@ -167,10 +168,10 @@ namespace UI
         public void Lose()
         {
             Pause(true);
-            Label losePopupLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("coin_label");
-            Label timeLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("time_label");
-            losePopupLabel.text = "0"; // # SHOULD BE MONEY
-            timeLabel.text = "0"; // # SHOULD BE TIME
+            Label losePopupLabel = loseGameUIDoc.rootVisualElement.Q<Label>("coin_label");
+            Label timeLabel = loseGameUIDoc.rootVisualElement.Q<Label>("time_label");
+            losePopupLabel.text = ship.CurrentCoins.ToString(); // # SHOULD BE MONEY
+            timeLabel.text = ((int)(ship.TimeFromStart / 60)).ToString(); // # SHOULD BE TIME
             losePopup.Open();
         }
     }
