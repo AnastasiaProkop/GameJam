@@ -29,7 +29,8 @@ public class Player : MonoBehaviour
 
     public NavMeshAgent navMeshAgent { get; private set; }
 
-    [SerializeField] public SkeletonAnimation skeletonAnimation {  get; private set; }
+    public SkeletonAnimation skeletonAnimation {  get; private set; }
+    public Animator animatorEffects;
 
 
     private void Awake()
@@ -45,6 +46,7 @@ public class Player : MonoBehaviour
         failState = new FailState(this, stateMachine, "fail");
 
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
+       // animatorEffects = GetComponentInChildren<Animator>();
 
         shipManager = ship.GetComponent<ShipManager>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour
         stateMachine.Initialize(idleState);
 
         dragedSailor.SetActive(false);
+
+        animatorEffects.gameObject.SetActive(false);
 
         navMeshAgent.updateRotation = false; 
         navMeshAgent.updateUpAxis = false;   
