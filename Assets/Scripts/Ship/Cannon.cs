@@ -9,6 +9,12 @@ public class Cannon : MonoBehaviour
     private ShipTask shipTask;
     public bool IsTaskActive { get; private set; }
 
+    [Header("Эффекты Выстрела")]
+    [Tooltip("Перетащите сюда префаб эффекта взрыва")]
+    public GameObject explosionVFXPrefab;
+    [Tooltip("Перетащите сюда дочерний объект 'MuzzlePoint'")]
+    public Transform pointVFX;
+
     void Awake()
     {
         shipTask = GetComponent<ShipTask>();
@@ -39,6 +45,10 @@ public class Cannon : MonoBehaviour
     {
         shipTask.enabled = false;
         //highlightObject.SetActive(false);
+        if (explosionVFXPrefab != null && pointVFX != null)
+        {
+            Instantiate(explosionVFXPrefab, pointVFX.position, pointVFX.rotation);
+        }
         IsTaskActive = false;
     }
 }
