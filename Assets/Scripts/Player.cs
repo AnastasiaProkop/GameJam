@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public ShootState shootState { get; private set; }
     public FixFloorState fixFloorState { get; private set; }
     public FixSideState fixSideState { get; private set; }
+    public FailState failState { get; private set; }
 
     private Vector3 mousePos;
     public Vector3 targetPos { get; private set; }
@@ -43,9 +44,10 @@ public class Player : MonoBehaviour
         idleState = new IdleState(this, stateMachine, "idle");
         walkState = new WalkState(this, stateMachine, "");
         putOutFireState = new PutOutFireState(this, stateMachine, "IsPutOutFire");
-        shootState = new ShootState(this, stateMachine, "IsShoot");
+        shootState = new ShootState(this, stateMachine, "pushka");
         fixFloorState = new FixFloorState(this, stateMachine, "water");
         fixSideState = new FixSideState(this, stateMachine, "bort");
+        failState = new FailState(this, stateMachine, "fail");
 
         skeletonAnimation = GetComponentInChildren<SkeletonAnimation>();
 
@@ -117,7 +119,6 @@ public class Player : MonoBehaviour
 
                     if (Vector3.Distance(transform.position, targetPos) > 0.1f)
                     {
-                        //navMeshAgent.SetDestination(targetPos);
                         stateMachine.ChangeState(walkState);
                     }
                 }
@@ -133,7 +134,12 @@ public class Player : MonoBehaviour
 
     }
 
-    private bool TaskAvailable()
+    public void ClearCurrentTask()
+    {
+        currentTag = "";
+        nextZone = 0;
+    }
+    public bool TaskAvailable()
     {
         TaskType? type =
             currentTag == "Gun"       ? TaskType.Gun       :
@@ -141,8 +147,9 @@ public class Player : MonoBehaviour
             currentTag == "SideHole"  ? TaskType.SideHole  :
             currentTag == "Fire"      ? TaskType.Fire      :
                                         null               ;
-        if (type == null) return true;
+        
+        if (type == null) return false;
 
-        return shipManager.TaskAvailableInZone((TaskType)type, nextZone - 1);
+        return (/*shipManager.TaskAvailableInZone((TaskType)type, nextZone - 1) &&*/ shipManager.IsTaskActiveInZone((TaskType)type, nextZone - 1));
     }
 }

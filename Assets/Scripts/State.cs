@@ -21,7 +21,7 @@ public abstract class State
     }
     public virtual void Enter()
     {
-        //animator.AnimationState.SetAnimation(0, animBoolName, true); не 
+        //animator.AnimationState.SetAnimation(0, animBoolName, true); 
 
     }
 

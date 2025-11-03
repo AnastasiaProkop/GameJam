@@ -19,7 +19,6 @@ public class WalkState : State
         {
             player.skeletonAnimation.AnimationState.SetAnimation(0, "go_back", true);
         }
-        Debug.Log("Walk");
         player.navMeshAgent.SetDestination(player.targetPos);
     }
 
@@ -39,17 +38,21 @@ public class WalkState : State
             {
                 if (!player.navMeshAgent.hasPath || player.navMeshAgent.velocity.sqrMagnitude == 0f)
                 {
-    
-                    if (player.currentTag == "Gun")
-                        stateMachine.ChangeState(player.shootState);
-                    else if (player.currentTag == "FloorHole")
-                        stateMachine.ChangeState(player.fixFloorState);
-                    else if (player.currentTag == "SideHole")
-                        stateMachine.ChangeState(player.fixSideState);
-                    else if (player.currentTag == "Fire")
-                        stateMachine.ChangeState(player.putOutFireState);
-                    else
-                        stateMachine.ChangeState(player.idleState);
+                    if (player.TaskAvailable()) { 
+
+                        if (player.currentTag == "Gun")
+                            stateMachine.ChangeState(player.shootState);
+                        else if (player.currentTag == "FloorHole")
+                            stateMachine.ChangeState(player.fixFloorState);
+                        else if (player.currentTag == "SideHole")
+                            stateMachine.ChangeState(player.fixSideState);
+                        else if (player.currentTag == "Fire")
+                            stateMachine.ChangeState(player.putOutFireState);
+                        //else
+                           // stateMachine.ChangeState(player.idleState);
+                    
+                    }
+                    else { stateMachine.ChangeState(player.failState); }
                 }
             }
         }
