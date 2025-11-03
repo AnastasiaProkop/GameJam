@@ -107,7 +107,6 @@ namespace UI
             }
 
             coinLabel.text = ship.CurrentCoins.ToString(); // # SHOULD BE MONEY VAR
-            Debug.Log(ship.CurrentCoins.ToString());
 
             // TOGGLE FOR EASY GAME OVER
             if (!paused && ship.CurrentHealth <= 0)
@@ -171,7 +170,7 @@ namespace UI
             Label losePopupLabel = loseGameUIDoc.rootVisualElement.Q<Label>("coin_label");
             Label timeLabel = loseGameUIDoc.rootVisualElement.Q<Label>("time_label");
             losePopupLabel.text = ship.CurrentCoins.ToString(); // # SHOULD BE MONEY
-            timeLabel.text = ((int)(ship.TimeFromStart / 60)).ToString(); // # SHOULD BE TIME
+            timeLabel.text = ((int)ship.TimeFromStart).ToString(); // # SHOULD BE TIME
             losePopup.Open();
         }
     }
