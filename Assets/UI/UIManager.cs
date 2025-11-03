@@ -11,14 +11,14 @@ namespace UI
         public UIDocument UIMainScreenDoc;
         public UIDocument popupUIDoc;
         // public UIDocument loseGameUIDoc;
-        // public UIDocument startUIDoc;
-        private UIDocument[] children;
+        public UIDocument startUIDoc;
         public Popup pausePopup;
+        public Popup startPopup;
         private HealthBar healthBar;
         private HealthBar insanityBar;
         private Label coinLabel;
-
         private int numberOfCoins = 0;
+        private bool paused = false;
         void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -26,6 +26,7 @@ namespace UI
 
         void Start()
         {
+            Pause(true);
             if (UIMainScreenDoc != null && UIMainScreenDoc.rootVisualElement != null)
             {
                 // getting health label
@@ -36,9 +37,11 @@ namespace UI
                 // AssignActionToButton("pause", GetPauseMenu);
                 AssignActionToButton("DEBUG_LWR_H", LowerHealth);
                 //getting popup
-                FindPopupByName("pause_popup");
+                FindPopups();
                 pausePopup.AssignActionToButton("resume", GetPauseMenu);
                 pausePopup.AssignActionToButton("exit", Exit);
+                startPopup.AssignActionToButton("play", StartGame);
+                startPopup.Open();
             }
             else
             {
@@ -59,15 +62,16 @@ namespace UI
             }
         }
 
-        void FindPopupByName(string popupName)
+        void FindPopups()
         {
             if (popupUIDoc != null)
             {
-                pausePopup = new Popup(popupName, popupUIDoc);
+                pausePopup = new Popup("pause_popup", popupUIDoc);
+                startPopup = new Popup("start_popup", startUIDoc);
             }
             else
             {
-                Debug.LogError($"Could not find '{popupName}' because UI Document does not exist.");
+                Debug.LogError($"Could not find popups because UI Document does not exist.");
             }
         }
 
@@ -75,7 +79,7 @@ namespace UI
         {
             healthBar?.Update(false);
             insanityBar?.Update(true);
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (!paused && Input.GetKeyDown(KeyCode.Space))
             {
                 GetPauseMenu();
             }
@@ -87,33 +91,53 @@ namespace UI
             coinLabel.text = (numberOfCoins++).ToString();
         }
 
-        public void GetPauseMenu()
+        public void StartGame()
         {
-            if (pausePopup != null)
+            if (startUIDoc != null)
             {
-                bool isOpen = pausePopup.Toggle();
-                if (isOpen)
-                {
-                    Time.timeScale = 0;
-                }
-                else
-                {
-                    Time.timeScale = 1;
-                }
+                startPopup.Close();
+                Pause(false);
             }
             else
             {
                 Debug.LogWarning("Could not toggle popup. It was not loaded.");
             }
         }
-        
+
+        public void GetPauseMenu()
+        {
+            if (pausePopup != null)
+            {
+                bool isOpen = pausePopup.Toggle();
+                Pause(isOpen);
+            }
+            else
+            {
+                Debug.LogWarning("Could not toggle popup. It was not loaded.");
+            }
+        }
+
         public void Exit()
         {
-            #if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-            #else
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
                 Application.Quit();
-            #endif
+#endif
+        }
+
+        public void Pause(bool shouldPause)
+        {
+            if (shouldPause)
+            {
+                paused = true;
+                Time.timeScale = 0;
+            }
+            else
+            {
+                paused = false;
+                Time.timeScale = 1;
+            }
         }
     }
 
