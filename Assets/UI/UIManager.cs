@@ -9,9 +9,16 @@ namespace UI
     public class UIManager : MonoBehaviour
     {
         public UIDocument UIMainScreenDoc;
-        public UIDocument[] children;
-        public Popup helpPopup;
+        public UIDocument popupUIDoc;
+        // public UIDocument loseGameUIDoc;
+        // public UIDocument startUIDoc;
+        private UIDocument[] children;
+        public Popup pausePopup;
         private HealthBar healthBar;
+        private HealthBar insanityBar;
+        private Label coinLabel;
+
+        private int numberOfCoins = 0;
         void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -22,12 +29,16 @@ namespace UI
             if (UIMainScreenDoc != null && UIMainScreenDoc.rootVisualElement != null)
             {
                 // getting health label
-                healthBar = new HealthBar("main", UIMainScreenDoc); // TODO: generalize class
+                healthBar = new HealthBar("healthbar_mask", UIMainScreenDoc); // TODO: generalize class
+                insanityBar = new HealthBar("insanity_mask", UIMainScreenDoc); // TODO: generalize class
+                coinLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("coins_num");
                 //getting bottoms and assigning functions to them
-                AssignActionToButton("help", GetHelpMenu);
+                AssignActionToButton("pause", GetPauseMenu);
                 AssignActionToButton("DEBUG_LWR_H", LowerHealth);
                 //getting popup
-                FindPopupByName("help_popup");
+                FindPopupByName("pause_popup");
+                pausePopup.AssignActionToButton("resume", GetPauseMenu);
+                pausePopup.AssignActionToButton("exit", Exit);
             }
             else
             {
@@ -50,12 +61,9 @@ namespace UI
 
         void FindPopupByName(string popupName)
         {
-            if (UIMainScreenDoc == null) return;
-            children = UIMainScreenDoc.gameObject.GetComponentsInChildren<UIDocument>(); // TODO: optimize
-            var popupUIDoc = children.FirstOrDefault(x => x.name == popupName);
             if (popupUIDoc != null)
             {
-                helpPopup = new Popup(popupName, popupUIDoc);
+                pausePopup = new Popup(popupName, popupUIDoc);
             }
             else
             {
@@ -65,25 +73,43 @@ namespace UI
 
         void Update()
         {
-            healthBar?.Update();
-
+            healthBar?.Update(false);
+            insanityBar?.Update(true);
         }
         public void LowerHealth()
         {
             healthBar?.DebugSimulateHealthChange();
+            insanityBar?.DebugSimulateHealthChange();
+            coinLabel.text = (numberOfCoins++).ToString();
         }
 
-        public void GetHelpMenu()
+        public void GetPauseMenu()
         {
-            if (helpPopup != null)
+            if (pausePopup != null)
             {
-                helpPopup.Toggle();
-                helpPopup.SetPosition(UIMainScreenDoc, 0, 0);
+                bool isOpen = pausePopup.Toggle();
+                if (isOpen)
+                {
+                    Time.timeScale = 0;
+                }
+                else
+                {
+                    Time.timeScale = 1;
+                }
             }
             else
             {
                 Debug.LogWarning("Could not toggle popup. It was not loaded.");
             }
+        }
+        
+        public void Exit()
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
         }
     }
 

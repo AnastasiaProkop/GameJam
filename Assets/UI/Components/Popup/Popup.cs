@@ -1,60 +1,93 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UI
+namespace UI.Components
 {
-    namespace Components
+    public class Popup
     {
-        public class Popup
+        private readonly UIDocument doc;
+        private readonly string name;
+        private bool isHelpVisible = false;
+        private readonly System.Action onClose = null;
+
+        public Popup(string popupName, UIDocument document, System.Action action = null)
         {
-            private readonly VisualElement popup;
-            private readonly UIDocument doc;
-            private bool isHelpVisible = false;
-            private readonly System.Action onClose = null;
-
-            public Popup(string popupName, UIDocument document, System.Action action = null)
+            doc = document;
+            onClose = action;
+            name = popupName;
+            if (doc != null && doc.rootVisualElement != null)
             {
-                doc = document;
-                popup = doc.rootVisualElement.Q<VisualElement>(popupName);
-                onClose = action;
+                doc.rootVisualElement.visible = false;
             }
+        }
 
-            public void Close()
+        public void Close()
+        {
+            if (doc != null && doc.rootVisualElement != null)
             {
-                if (popup != null)
-                {
-                    popup.style.display = DisplayStyle.None;
-                    isHelpVisible = false;
-                    onClose?.Invoke();
-                }
+                doc.rootVisualElement.visible = false;
+                isHelpVisible = false; // FIX: Update the flag
+                onClose?.Invoke();
             }
-
-            public void SetPosition(UIDocument target, float xPercent, float yPercent)
+            else
             {
-                if (target == null || doc == null) return;
-
-                VisualElement targetRoot = target.rootVisualElement;
-                VisualElement docRoot = doc.rootVisualElement;
-                docRoot.style.position = Position.Absolute;
-                docRoot.style.left = targetRoot.layout.x + (targetRoot.layout.width * xPercent / 100f);
-                docRoot.style.top = targetRoot.layout.y + (targetRoot.layout.height * yPercent / 100f);
+                Debug.LogError("popup is null");
             }
+        }
 
-            public void Open()
+        public void SetPosition(UIDocument target, float xPercent = 50f, float yPercent = 50f)
+        {
+            if (target == null || doc == null || doc.rootVisualElement == null) return;
+
+            VisualElement targetRoot = target.rootVisualElement;
+            VisualElement docRoot = doc.rootVisualElement;
+
+            // docRoot.style.position = Position.Absolute;
+
+            // float centerX = (targetRoot.layout.width - 500) / 2f;
+            // float centerY = (targetRoot.layout.height - 500) / 2f;
+
+            // docRoot.style.left = centerX;
+            // docRoot.style.top = centerY;
+        }
+
+        public void Open()
+        {
+            if (doc != null && doc.rootVisualElement != null)
             {
-                if (popup != null)
-                {
-                    popup.style.display = DisplayStyle.Flex;
-                    isHelpVisible = true;
-                }
+                doc.rootVisualElement.visible = true;
+                isHelpVisible = true; // FIX: Update the flag
             }
-
-            public void Toggle()
+            else
             {
-                if (isHelpVisible)
-                    Close();
-                else
-                    Open();
+                Debug.LogError($"popup is null for open.");
+            }
+        }
+
+        public bool Toggle()
+        {
+            if (isHelpVisible)
+            {
+                Close();
+                return false;
+            }
+            else
+            {
+                Open();
+                return true;
+            }
+        }
+
+        public void AssignActionToButton(string buttonName, System.Action action)
+        {
+            var button = doc.rootVisualElement.Q<Button>(buttonName);
+            if (button != null)
+            {
+                button.clicked += action;
+            }
+            else
+            {
+                Debug.LogError($"Could not find '{buttonName}' in UI Document");
             }
         }
     }

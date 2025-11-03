@@ -7,16 +7,15 @@ namespace UI
     {
         public class HealthBar
         {
-            private readonly Label m_HealthLabel;
             private readonly VisualElement m_HealthBarMask;
 
             // ON BEST - INFO FROM PLAYER CONTROL
             private const int DEBUG_MAX_HEALTH = 100;
             private int debug_health = 100;
             private bool healthChanged = true;
-            public void DebugSimulateHealthChange()
+            public void DebugSimulateHealthChange(int addValue = 0)
             {
-                if (debug_health > 0)
+                if (debug_health > 0 + addValue)
                 {
                     debug_health -= 10;
                 }
@@ -28,15 +27,10 @@ namespace UI
             }
             public HealthBar(string barName, UIDocument doc)
             {
-                m_HealthLabel = doc.rootVisualElement.Q<Label>("health_label");
-                m_HealthBarMask = doc.rootVisualElement.Q<VisualElement>("health_mask");
-                if (m_HealthLabel == null)
-                {
-                    Debug.LogWarning("Could not find 'health_label' in UI Document");
-                }
+                m_HealthBarMask = doc.rootVisualElement.Q<VisualElement>(barName);
                 if (m_HealthBarMask == null)
                 {
-                    Debug.LogWarning("Could not find 'health_label' in UI Document");
+                    Debug.LogWarning($"Could not find '{barName}' in UI Document");
                 }
             }
             public void LowerHealth()
@@ -44,14 +38,21 @@ namespace UI
                 DebugSimulateHealthChange();
                 Debug.Log("Performing action!");
             }
-            public void Update()
+            
+            public void Update(bool isWidth)
             {
-                if (healthChanged && m_HealthLabel != null)
+                if (healthChanged)
                 {
-                    m_HealthLabel.text = $"{debug_health}/{DEBUG_MAX_HEALTH}";
                     float healthRatio = (float)debug_health / DEBUG_MAX_HEALTH;
                     float healthPercent = Mathf.Lerp(0, 100, healthRatio);
-                    m_HealthBarMask.style.width = Length.Percent(healthPercent);
+                    var lengthToCrop = Length.Percent(healthPercent);
+                    if (isWidth)
+                    {
+                        m_HealthBarMask.style.width = lengthToCrop;
+                    } else
+                    {
+                        m_HealthBarMask.style.height = lengthToCrop;
+                    }
                 }
             }
         };

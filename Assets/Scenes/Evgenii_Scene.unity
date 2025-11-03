@@ -1070,11 +1070,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.248}
-<<<<<<< HEAD:Assets/Base_scene.unity
---- !u!1 &781417998
-=======
 --- !u!1 &859613799
->>>>>>> main:Assets/Scenes/Evgenii_Scene.unity
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1082,112 +1078,20 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD:Assets/Base_scene.unity
-  - component: {fileID: 781417999}
-  - component: {fileID: 781418001}
-  m_Layer: 5
-  m_Name: UIManager
-=======
   - component: {fileID: 859613800}
   m_Layer: 0
   m_Name: TaskZone 1
->>>>>>> main:Assets/Scenes/Evgenii_Scene.unity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD:Assets/Base_scene.unity
---- !u!224 &781417999
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 781417998}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 696.25, y: 510.25}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &781418001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 781417998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a77ccba578e025745bdafacf2423e680, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UIMainScreenDoc: {fileID: 1050227927}
-  children: []
---- !u!1 &1050227925
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1050227926}
-  - component: {fileID: 1050227927}
-  m_Layer: 5
-  m_Name: MainMenu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1050227926
-=======
 --- !u!4 &859613800
->>>>>>> main:Assets/Scenes/Evgenii_Scene.unity
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD:Assets/Base_scene.unity
-  m_GameObject: {fileID: 1050227925}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 34, y: 399, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2032199877}
-  m_Father: {fileID: 1881068616}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1050227927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1050227925}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 22adb33ceca9fe441a540c0dffeb8449, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 23d2a650523091542bcab249f5ff4521, type: 3}
-  m_SortingOrder: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-=======
   m_GameObject: {fileID: 859613799}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1200,7 +1104,6 @@ MonoBehaviour:
   - {fileID: 1497135984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
->>>>>>> main:Assets/Scenes/Evgenii_Scene.unity
 --- !u!1 &1137907408
 GameObject:
   m_ObjectHideFlags: 0
@@ -3598,11 +3501,5 @@ SceneRoots:
   - {fileID: 1733393933}
   - {fileID: 96574354}
   - {fileID: 1643075366}
-<<<<<<< HEAD:Assets/Base_scene.unity
-  - {fileID: 1881068616}
-  - {fileID: 310185430}
-  - {fileID: 781417999}
-=======
   - {fileID: 859613800}
   - {fileID: 5003143283158017590}
->>>>>>> main:Assets/Scenes/Evgenii_Scene.unity
