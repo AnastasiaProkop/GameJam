@@ -48,7 +48,6 @@ public class ShipManager : MonoBehaviour
     {
         //Пытаемся создать задачу
         HandleTaskSpawning();
-
         //Обновляем состояние
         switch (CurrentState)
         {

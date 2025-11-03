@@ -14,6 +14,7 @@ namespace UI
         public UIDocument startUIDoc;
         public Popup pausePopup;
         public Popup startPopup;
+        public ShipManager ship;
         private HealthBar healthBar;
         private HealthBar insanityBar;
         private Label coinLabel;
@@ -30,12 +31,12 @@ namespace UI
             if (UIMainScreenDoc != null && UIMainScreenDoc.rootVisualElement != null)
             {
                 // getting health label
-                healthBar = new HealthBar("healthbar_mask", UIMainScreenDoc); // TODO: generalize class
-                insanityBar = new HealthBar("insanity_mask", UIMainScreenDoc); // TODO: generalize class
+                healthBar = new HealthBar("healthbar_mask", UIMainScreenDoc, () => ship.CurrentHealth, () => ship.maxHealth); // TODO: generalize class
+                insanityBar = new HealthBar("insanity_mask", UIMainScreenDoc, () => ship.CurrentMadness, () => ship.maxMadnessValue); // TODO: generalize class
                 coinLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("coins_num");
                 //getting bottoms and assigning functions to them
                 // AssignActionToButton("pause", GetPauseMenu);
-                AssignActionToButton("DEBUG_LWR_H", LowerHealth);
+                //AssignActionToButton("DEBUG_LWR_H", ship.CurrentHealth);
                 //getting popup
                 FindPopups();
                 pausePopup.AssignActionToButton("resume", GetPauseMenu);
@@ -84,12 +85,12 @@ namespace UI
                 GetPauseMenu();
             }
         }
-        public void LowerHealth()
-        {
-            healthBar?.DebugSimulateHealthChange();
-            insanityBar?.DebugSimulateHealthChange();
-            coinLabel.text = (numberOfCoins++).ToString();
-        }
+        // public void LowerHealth()
+        // {
+        //     healthBar?.DebugSimulateHealthChange();
+        //     insanityBar?.DebugSimulateHealthChange();
+        //     coinLabel.text = (numberOfCoins++).ToString();
+        // }
 
         public void StartGame()
         {

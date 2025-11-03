@@ -10,9 +10,12 @@ namespace UI
             private readonly VisualElement m_HealthBarMask;
 
             // ON BEST - INFO FROM PLAYER CONTROL
+
             private const int DEBUG_MAX_HEALTH = 100;
             private int debug_health = 100;
-            private bool healthChanged = true;
+            private bool DEBUG_healthChanged = true;
+            private readonly System.Func<float> getter = null;
+            private readonly System.Func<float> maxGetter = null;
             public void DebugSimulateHealthChange(int addValue = 0)
             {
                 if (debug_health > 0 + addValue)
@@ -23,15 +26,18 @@ namespace UI
                 {
                     debug_health = DEBUG_MAX_HEALTH;
                 }
-                healthChanged = true;
+                DEBUG_healthChanged = true;
             }
-            public HealthBar(string barName, UIDocument doc)
+
+            public HealthBar(string barName, UIDocument doc, System.Func<float> g, System.Func<float> mg)
             {
                 m_HealthBarMask = doc.rootVisualElement.Q<VisualElement>(barName);
                 if (m_HealthBarMask == null)
                 {
                     Debug.LogWarning($"Could not find '{barName}' in UI Document");
                 }
+                getter = g;
+                maxGetter = mg;
             }
             public void LowerHealth()
             {
@@ -39,12 +45,12 @@ namespace UI
                 Debug.Log("Performing action!");
             }
             
-            public void Update(bool isWidth)
+            public void Update(bool isWidth, int min = 0, int max = 100)
             {
-                if (healthChanged)
+                if (DEBUG_healthChanged) // TODO: ADD IN SHIP MANAGER THAT HEALTH CHANGED
                 {
-                    float healthRatio = (float)debug_health / DEBUG_MAX_HEALTH;
-                    float healthPercent = Mathf.Lerp(0, 100, healthRatio);
+                    float healthRatio = (float)getter.Invoke() / maxGetter.Invoke();
+                    float healthPercent = Mathf.Lerp(min, max, healthRatio);
                     var lengthToCrop = Length.Percent(healthPercent);
                     if (isWidth)
                     {
