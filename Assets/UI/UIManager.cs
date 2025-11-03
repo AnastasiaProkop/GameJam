@@ -66,6 +66,23 @@ namespace UI
             }
         }
 
+        // void GetTaskBars(string buttonName, System.Action action)
+        // {
+        //     List<ShipTask> tasks = new();
+        //     foreach (var ZoneManager in ship.shipTaskZones)
+        //     {
+        //         foreach (var task in ZoneManager.TaskList)
+        //         {
+        //             tasks.Add(task);
+        //         }
+        //     }
+        //     foreach (var task in tasks) 
+        //     {
+        //         int percent = (int)((task.CurrentProgress / task.timeToComplete) * 100);
+        //         bool isFailed = task.taskIsFailed();
+        //     }
+        // }
+
         void FindPopups()
         {
             if (popupUIDoc != null)
