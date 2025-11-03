@@ -4,6 +4,7 @@ using UI.Components;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Video;
 
 namespace UI
 {
@@ -15,6 +16,7 @@ namespace UI
         public UIDocument startUIDoc;
         public Popup pausePopup;
         public Popup startPopup;
+        public GameObject mainmenuVideo;
         public Popup losePopup;
         public ShipManager ship;
         private HealthBar healthBar;
@@ -46,12 +48,15 @@ namespace UI
                 startPopup.AssignActionToButton("play", StartGame);
                 startPopup.Open();
                 losePopup.AssignActionToButton("exit", Exit);
+                UIMainScreenDoc.enabled = false;
             }
             else
             {
                 Debug.LogError("UIDocument not found. Make sure there's a UIDocument in the scene.");
             }
         }
+
+        
 
         void AssignActionToButton(string buttonName, System.Action action)
         {
@@ -120,6 +125,8 @@ namespace UI
             if (startUIDoc != null)
             {
                 startPopup.Close();
+                mainmenuVideo.SetActive(false);
+                UIMainScreenDoc.enabled = true;
                 Pause(false);
             }
             else
@@ -169,6 +176,7 @@ namespace UI
             Pause(true);
             Label losePopupLabel = loseGameUIDoc.rootVisualElement.Q<Label>("coin_label");
             Label timeLabel = loseGameUIDoc.rootVisualElement.Q<Label>("time_label");
+            //mainmenuVideo.SetActive(true);
             losePopupLabel.text = ship.CurrentCoins.ToString(); // # SHOULD BE MONEY
             timeLabel.text = ((int)ship.TimeFromStart).ToString(); // # SHOULD BE TIME
             losePopup.Open();
