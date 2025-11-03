@@ -151,14 +151,6 @@ public class ShipTaskZone : MonoBehaviour
         TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
     }
 
-    public bool TaskAvailable(TaskType task)
-    {
-        ShipTask shipTask = TaskList.Find(shipTask => shipTask.taskType == task);
-        if (shipTask == null) return true;
-
-        return shipTask.TaskAvailable();
-    }
-
     private Transform GetAnchorForTaskType(TaskType type)
     {
         if (type == TaskType.Gun)

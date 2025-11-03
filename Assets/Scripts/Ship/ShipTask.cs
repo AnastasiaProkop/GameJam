@@ -46,7 +46,7 @@ public class ShipTask : MonoBehaviour
     private float currentbaseDamageInMadness; // Текущее количество урона, наносимое в состоянии безумия
     
     public float CurrentProgress { get; private set; }
-    private bool isBeingWorkedOn = false;
+    private int crewWorkingOnTask = 0;
     private bool isFailed = false;
 
     private ShipManager shipManager; // ссылка на ShipManager, чтобы отслеживать состояние корабля(обычное/безумие)
@@ -61,7 +61,6 @@ public class ShipTask : MonoBehaviour
     void Start()
     {
         CurrentProgress = 0f;
-        isBeingWorkedOn = false;
         isFailed = false;
         currentFailureTimer = failureTime;
         currentbaseMadnessRate = baseMadnessRate;
@@ -76,9 +75,9 @@ public class ShipTask : MonoBehaviour
             HandleFailureTimer();
         }
 
-        if (isBeingWorkedOn)
+        if (crewWorkingOnTask > 0)
         {
-            CurrentProgress = Mathf.Min(timeToComplete, CurrentProgress + Time.deltaTime);
+            CurrentProgress = Mathf.Min(timeToComplete, CurrentProgress + Time.deltaTime*crewWorkingOnTask);
             if (CurrentProgress >= timeToComplete)
             {
                 Complete();
@@ -94,13 +93,13 @@ public class ShipTask : MonoBehaviour
     public void StartWork()
     {
         Debug.Log("Started fixing " + taskType.ToString());
-        isBeingWorkedOn = true;
+        crewWorkingOnTask++;
     }
 
     public void StopWork()
     {
         Debug.Log("Stopped fixing " + taskType.ToString());
-        isBeingWorkedOn = false;
+        crewWorkingOnTask--;
     }
 
     private void HandleFailureTimer()
@@ -166,10 +165,5 @@ public class ShipTask : MonoBehaviour
     public float GetCurrentDamageInMadness()
     {
         return currentbaseDamageInMadness;
-    }
-
-    public bool TaskAvailable()
-    {
-        return !isBeingWorkedOn;
     }
 }
