@@ -26,7 +26,7 @@
 }
 
 #unity-tracker {
-    background-image: url("project://database/Assets/UI/Sprites/ui_0000_slider.png");
+    background-image: url("project://database/Assets/UI/Sprites/ui_slider_bar.png");
     background-color: transparent;
     background-size: contain;
     background-position: center;
@@ -42,7 +42,7 @@
 }
 
 #unity-dragger {
-    background-image: url("project://database/Assets/UI/Sprites/ui_0001_sliderpoint.png");
+    background-image: url("project://database/Assets/UI/Sprites/ui_slider.png");
     background-color: transparent;
     
     border-width: 0px;
