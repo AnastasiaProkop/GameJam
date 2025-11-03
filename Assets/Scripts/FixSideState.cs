@@ -8,6 +8,8 @@ public class FixSideState : State
 
     public override void Enter()
     {
+        SoundManager.Instance.FixSide();
+
         player.currentZone = player.nextZone;
 
         player.animatorEffects.gameObject.SetActive(true);
@@ -20,6 +22,7 @@ public class FixSideState : State
 
     public override void Exit()
     {
+        SoundManager.Instance.StopFixSide();
         player.animatorEffects.gameObject.SetActive(false);
         //player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", false);
         player.shipManager.StopWorkInZone(
