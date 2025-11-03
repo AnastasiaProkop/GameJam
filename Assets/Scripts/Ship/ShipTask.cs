@@ -15,7 +15,7 @@ public class ShipTask : MonoBehaviour
 
     [Header("Параметры Задачи")]
     [Tooltip("Сколько времени (в секундах) нужно, чтобы выполнить задачу")]
-    public float timeToComplete = 10f;
+    public float timeToComplete = 5.0f;
     
     [Tooltip("Какой урон в секунду наносит эта задача в состоянии 'Madness'")]
     public float baseDamageInMadness = 1f; 
@@ -39,6 +39,7 @@ public class ShipTask : MonoBehaviour
     [Tooltip("Примерная длительность анимации появления для этой задачи (в секундах)")]
     public float appearanceAnimationDuration = 4.0f;
     public float taskCreationTiming = 1.0f;
+    private Animator taskAnimator;
     
     // Приватные переменные для отслеживания состояния
     private float currentFailureTimer;
@@ -46,7 +47,7 @@ public class ShipTask : MonoBehaviour
     private float currentbaseDamageInMadness; // Текущее количество урона, наносимое в состоянии безумия
     
     public float CurrentProgress { get; private set; }
-    private bool isBeingWorkedOn = false;
+    private int crewWorkingOnTask = 0;
     private bool isFailed = false;
 
     private ShipManager shipManager; // ссылка на ShipManager, чтобы отслеживать состояние корабля(обычное/безумие)
@@ -58,10 +59,14 @@ public class ShipTask : MonoBehaviour
         parentZone = zone;
     }
 
+    void Awake()
+    {
+        taskAnimator = GetComponent<Animator>();
+    }
+
     void Start()
     {
         CurrentProgress = 0f;
-        isBeingWorkedOn = false;
         isFailed = false;
         currentFailureTimer = failureTime;
         currentbaseMadnessRate = baseMadnessRate;
@@ -76,9 +81,9 @@ public class ShipTask : MonoBehaviour
             HandleFailureTimer();
         }
 
-        if (isBeingWorkedOn)
+        if (crewWorkingOnTask > 0)
         {
-            CurrentProgress = Mathf.Min(timeToComplete, CurrentProgress + Time.deltaTime);
+            CurrentProgress = Mathf.Min(timeToComplete, CurrentProgress + Time.deltaTime*crewWorkingOnTask);
             if (CurrentProgress >= timeToComplete)
             {
                 Complete();
@@ -89,18 +94,28 @@ public class ShipTask : MonoBehaviour
             shipManager.TakeDamage(currentbaseDamageInMadness * Time.deltaTime);
         }
     }
+
+    public void ActivateTask(ShipManager manager, ShipTaskZone zone)
+    {
+        Initialize(manager, zone);
+        gameObject.SetActive(true);
+        if (taskAnimator != null)
+        {
+            taskAnimator.SetBool("IsActive", true);
+        }
+    }
     
 
     public void StartWork()
     {
         Debug.Log("Started fixing " + taskType.ToString());
-        isBeingWorkedOn = true;
+        crewWorkingOnTask++;
     }
 
     public void StopWork()
     {
         Debug.Log("Stopped fixing " + taskType.ToString());
-        isBeingWorkedOn = false;
+        crewWorkingOnTask--;
     }
 
     private void HandleFailureTimer()
@@ -166,10 +181,5 @@ public class ShipTask : MonoBehaviour
     public float GetCurrentDamageInMadness()
     {
         return currentbaseDamageInMadness;
-    }
-
-    public bool TaskAvailable()
-    {
-        return !isBeingWorkedOn;
     }
 }

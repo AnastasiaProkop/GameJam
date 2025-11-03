@@ -135,8 +135,7 @@ public class ShipTaskZone : MonoBehaviour
         }
         else if (taskRegistry.TryGetValue(taskType, out PrePlacedTask placement))
         {
-            placement.taskObject.gameObject.SetActive(true);
-            placement.taskObject.Initialize(manager, this);
+            placement.taskObject.ActivateTask(manager, this);
             AddTask(placement.taskObject);
         }
     }
@@ -149,14 +148,6 @@ public class ShipTaskZone : MonoBehaviour
     public void StopWork(TaskType task)
     {
         TaskList.Find(shipTask => shipTask.taskType == task)?.StopWork();
-    }
-
-    public bool TaskAvailable(TaskType task)
-    {
-        ShipTask shipTask = TaskList.Find(shipTask => shipTask.taskType == task);
-        if (shipTask == null) return true;
-
-        return shipTask.TaskAvailable();
     }
 
     private Transform GetAnchorForTaskType(TaskType type)
