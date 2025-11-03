@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6193846479464358439}
   m_Layer: 0
   m_Name: GFX Boom
-  m_TagString: Untagged
+  m_TagString: FloorHole
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
