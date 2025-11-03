@@ -10,7 +10,7 @@ public class FixSideState : State
     {
         player.currentZone = player.nextZone;
 
-        player.skeletonAnimation.AnimationState.SetAnimation(0, "bort", true);
+        player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
         player.shipManager.StartWorkInZone(
             TaskType.SideHole, player.currentZone - 1);
         base.Enter();
@@ -27,5 +27,13 @@ public class FixSideState : State
     public override void Update()
     {
         base.Update();
+
+        if (!player.TaskAvailable())
+        {
+            player.stateMachine.ChangeState(player.idleState);
+            player.ClearCurrentTask(); 
+        }
     }
+
+ 
 }
