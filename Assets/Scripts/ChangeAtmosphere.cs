@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 public class ChangeAtmosphere : MonoBehaviour
@@ -51,6 +52,12 @@ public class ChangeAtmosphere : MonoBehaviour
     [SerializeField, Range(0f, 5f)] private float globalIntensityNormal = 0.9f;
     [SerializeField, Range(0f, 5f)] private float globalIntensityMadness = 0.17f;
 
+    // global volume для затемнения вообще всего
+    [SerializeField] private Volume globalVolume;
+    [SerializeField] private UnityEngine.Color GlobalColorNormal = new UnityEngine.Color(1f, 1f, 1f, 1f);
+    [SerializeField] private UnityEngine.Color GlobalColorMadness = new UnityEngine.Color(0.7f, 0.8f, 1f, 1f);
+    private ColorAdjustments _colorAdj;
+
     void OnEnable()               
     {
         // вода
@@ -66,6 +73,20 @@ public class ChangeAtmosphere : MonoBehaviour
         waterRenderer.SetPropertyBlock(null);
         Debug.Log($"MAT: {WaterMat.name} | SHADER: {WaterMat.shader.name}");
         DumpProps(WaterMat);
+
+        // проверка глобал вольюм на всякий
+        var profile = globalVolume.profile ?? globalVolume.sharedProfile;
+        if (!profile)
+        {
+            Debug.LogError("У Volume нет профиля.");
+            return;
+        }
+        if (!profile.TryGet(out _colorAdj))
+        {
+            _colorAdj = profile.Add<ColorAdjustments>(true); // true = сразу включить все overrides
+            Debug.LogWarning("В профиле не было Color Adjustments — добавили.");
+        }
+        _colorAdj.colorFilter.overrideState = true;
 
         //свет
         SetDay();
@@ -118,6 +139,9 @@ public class ChangeAtmosphere : MonoBehaviour
 
         // 2d глобальный
         globalLight.intensity = globalIntensityNormal;
+
+        //глобал вольюм
+        _colorAdj.colorFilter.value = GlobalColorNormal;
     }
 
     void SetNight()
@@ -156,6 +180,9 @@ public class ChangeAtmosphere : MonoBehaviour
 
         // 2d глобальный
         globalLight.intensity = globalIntensityMadness;
+
+        //глобал вольюм
+        _colorAdj.colorFilter.value = GlobalColorMadness;
 
     }
 

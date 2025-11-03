@@ -8,6 +8,8 @@ public class FixFloorState : State
 
     public override void Enter()
     {
+        SoundManager.Instance.FixFloor();
+
         player.currentZone = player.nextZone;
 
         player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
@@ -18,6 +20,8 @@ public class FixFloorState : State
 
     public override void Exit()
     {
+        SoundManager.Instance.StopFixFloor();
+
         player.shipManager.StopWorkInZone(
             TaskType.FloorHole, player.currentZone - 1);
         base.Exit();

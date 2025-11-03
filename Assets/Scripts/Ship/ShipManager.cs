@@ -139,6 +139,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = maxMadnessValue;
             CurrentState = ShipState.Madness;
+            SoundManager.Instance.ChangeOnMad();
             sceneAtmosphere.ToMadness();
             Debug.Log("КОРАБЛЬ ОХВАЧЕН БЕЗУМИЕМ!");
         }
@@ -155,6 +156,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = 0;
             CurrentState = ShipState.Normal;
+            SoundManager.Instance.ChangeOnNormal();
             sceneAtmosphere.ToNormal();
             Debug.Log("Безумие отступило. Корабль в обычном состоянии.");
         }
