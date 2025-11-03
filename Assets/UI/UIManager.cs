@@ -33,7 +33,7 @@ namespace UI
                 insanityBar = new HealthBar("insanity_mask", UIMainScreenDoc); // TODO: generalize class
                 coinLabel = UIMainScreenDoc.rootVisualElement.Q<Label>("coins_num");
                 //getting bottoms and assigning functions to them
-                AssignActionToButton("pause", GetPauseMenu);
+                // AssignActionToButton("pause", GetPauseMenu);
                 AssignActionToButton("DEBUG_LWR_H", LowerHealth);
                 //getting popup
                 FindPopupByName("pause_popup");
@@ -75,6 +75,10 @@ namespace UI
         {
             healthBar?.Update(false);
             insanityBar?.Update(true);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GetPauseMenu();
+            }
         }
         public void LowerHealth()
         {
