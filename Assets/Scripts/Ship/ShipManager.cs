@@ -23,6 +23,10 @@ public class ShipManager : MonoBehaviour
     [Tooltip("Насколько быстро полоса Безумия убывает в состоянии Madness (единиц в секунду).")]
     public float madnessDecayRate = 5.0f;
 
+    [Header("Эффекты Безумия")]
+    [Tooltip("Перетащите сюда объект с головой Кракена")]
+    public GameObject krakenHeadObject;
+
     // Текущее значение полосы Безумия
     public float CurrentMadness { get; private set; }
 
@@ -41,6 +45,7 @@ public class ShipManager : MonoBehaviour
         CurrentState = ShipState.Normal;
         CurrentMadness = 0f; // Начинаем с нуля
         taskSpawnTimer = taskSpawnInterval;
+        krakenHeadObject?.SetActive(false);
     }
 
     // Update is called once per frame
@@ -135,6 +140,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = maxMadnessValue;
             CurrentState = ShipState.Madness;
+            krakenHeadObject?.SetActive(true);
             Debug.Log("КОРАБЛЬ ОХВАЧЕН БЕЗУМИЕМ!");
         }
     }
@@ -150,6 +156,7 @@ public class ShipManager : MonoBehaviour
         {
             CurrentMadness = 0;
             CurrentState = ShipState.Normal;
+            krakenHeadObject?.SetActive(false);
             Debug.Log("Безумие отступило. Корабль в обычном состоянии.");
         }
 
@@ -183,10 +190,12 @@ public class ShipManager : MonoBehaviour
     }
 
 
+
     public void StartWorkInZone(TaskType task, int zoneIndex)
     {
+        Debug.Log("123");
         if (zoneIndex < 0 || zoneIndex >= shipTaskZones.Count) return;
-
+        Debug.Log("345");
         shipTaskZones[zoneIndex].StartWork(task);
     }
 
@@ -203,4 +212,5 @@ public class ShipManager : MonoBehaviour
 
         return shipTaskZones[zoneIndex].TaskAvailable(task);
     }
+
 }

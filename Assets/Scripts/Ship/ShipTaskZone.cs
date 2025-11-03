@@ -128,15 +128,14 @@ public class ShipTaskZone : MonoBehaviour
 
     private void ActivatePrePlacedTask(ShipManager manager, TaskType taskType)
     {
-        if (taskType == TaskType.Gun)
+        if (taskType == TaskType.Gun && targetCannon != null)
         {
-            targetCannon?.ActivateTask(manager, this);
+            targetCannon.ActivateTask(manager, this);
             AddTask(targetCannon.GetComponent<ShipTask>());
         }
         else if (taskRegistry.TryGetValue(taskType, out PrePlacedTask placement))
         {
-            placement.taskObject.gameObject.SetActive(true);
-            placement.taskObject.Initialize(manager, this);
+            placement.taskObject.ActivateTask(manager, this);
             AddTask(placement.taskObject);
         }
     }

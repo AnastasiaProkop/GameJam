@@ -18,7 +18,7 @@ public class FixFloorState : State
 
     public override void Exit()
     {
-       // player.skeletonAnimation.AnimationState.SetAnimation(0, "water", false);
+        player.skeletonAnimation.AnimationState.SetAnimation(0, "water", false);
         player.shipManager.StopWorkInZone(
             TaskType.FloorHole, player.currentZone - 1);
         base.Exit();

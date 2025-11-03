@@ -49,6 +49,12 @@ public class ShipTask : MonoBehaviour
     private bool isBeingWorkedOn = false;
     private bool isFailed = false;
 
+    private Animator taskAnimator;
+    [Header("UI")]
+    public GameObject taskUIPrefab;
+    public Vector3 uiOffset; // Смещение, чтобы UI был над задачей
+    private TaskUI currentTaskUI;
+
     private ShipManager shipManager; // ссылка на ShipManager, чтобы отслеживать состояние корабля(обычное/безумие)
     private ShipTaskZone parentZone; // ссылка на ShipTaskZone, в которой нахожится задача, чтобы после выполнения задачи отключать её
 
@@ -56,6 +62,11 @@ public class ShipTask : MonoBehaviour
     {
         shipManager = manager;
         parentZone = zone;
+    }
+
+    void Awake()
+    {
+        taskAnimator = GetComponent<Animator>();
     }
 
     void Start()
@@ -87,6 +98,31 @@ public class ShipTask : MonoBehaviour
         else if (shipManager.CurrentState == ShipManager.ShipState.Madness)
         {
             shipManager.TakeDamage(currentbaseDamageInMadness * Time.deltaTime);
+        }
+
+        if (currentTaskUI != null)
+        {
+            float progress = CurrentProgress / timeToComplete;
+            float failureTime = currentFailureTimer / this.failureTime;
+            currentTaskUI.UpdateBars(progress, failureTime);
+        }
+    }
+
+    public void ActivateTask(ShipManager manager, ShipTaskZone zone)
+    {
+        Initialize(manager, zone);
+        gameObject.SetActive(true);
+        if (taskAnimator != null)
+        {
+            taskAnimator.SetBool("IsActive", true);
+        }
+
+
+        // Создаем UI над задачей
+        if (taskUIPrefab != null && currentTaskUI == null)
+        {
+            GameObject uiObj = Instantiate(taskUIPrefab, transform.position + uiOffset, Quaternion.identity, transform);
+            currentTaskUI = uiObj.GetComponent<TaskUI>();
         }
     }
     
@@ -156,6 +192,10 @@ public class ShipTask : MonoBehaviour
         // Сбрасываем все изменяемые состояния
         Start();
         gameObject.SetActive(false);
+        if (currentTaskUI != null)
+        {
+            Destroy(currentTaskUI.gameObject);
+        }
     }
 
     public float GetCurrentMadnessRate()
