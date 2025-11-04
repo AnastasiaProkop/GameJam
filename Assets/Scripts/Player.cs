@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
         stateMachine = new StateMachine();
         idleState = new IdleState(this, stateMachine, "idle");
         walkState = new WalkState(this, stateMachine, "");
-        putOutFireState = new PutOutFireState(this, stateMachine, "IsPutOutFire");
+        putOutFireState = new PutOutFireState(this, stateMachine, "water");
         shootState = new ShootState(this, stateMachine, "pushka");
         fixFloorState = new FixFloorState(this, stateMachine, "water");
         fixSideState = new FixSideState(this, stateMachine, "bort");

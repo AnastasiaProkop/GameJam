@@ -9,7 +9,7 @@ public class PutOutFireState : State
     public override void Enter()
     {
         player.currentZone = player.nextZone;
-
+        player.skeletonAnimation.AnimationState.SetAnimation(0, animBoolName, true);
         player.shipManager.StartWorkInZone(
             TaskType.Fire, player.currentZone - 1);
         base.Enter();
@@ -25,5 +25,10 @@ public class PutOutFireState : State
     public override void Update()
     {
         base.Update();
+        if (!player.TaskAvailable())
+        { 
+            player.stateMachine.ChangeState(player.idleState);
+            player.ClearCurrentTask();
+        }
     }
 }
